@@ -375,18 +375,48 @@ function formatRSSTime(pubDate) {
   return `${month}/${day} ${hours}:${minutes}`;
 }
 
+const RSS_SOURCES = [
+  { url: 'https://news.google.com/rss/search?q=SK하이닉스&hl=ko', category: 'memory', icon: '📄' },
+  { url: 'https://news.google.com/rss/search?q=삼성전자+HBM&hl=ko', category: 'memory', icon: '📄' },
+  { url: 'https://news.google.com/rss/search?q=마이크론&hl=ko', category: 'memory', icon: '📄' },
+
+  { url: 'https://news.google.com/rss/search?q=LS일렉트릭&hl=ko', category: 'power', icon: '📄' },
+  { url: 'https://news.google.com/rss/search?q=HD현대일렉트릭&hl=ko', category: 'power', icon: '📄' },
+  { url: 'https://news.google.com/rss/search?q=효성중공업&hl=ko', category: 'power', icon: '📄' },
+  { url: 'https://news.google.com/rss/search?q=두산에너빌리티&hl=ko', category: 'power', icon: '📄' },
+
+  { url: 'https://news.google.com/rss/search?q=NVIDIA+AI&hl=ko', category: 'bigtech', icon: '📄' },
+  { url: 'https://news.google.com/rss/search?q=Microsoft+capex&hl=ko', category: 'bigtech', icon: '📄' },
+  { url: 'https://news.google.com/rss/search?q=AI+데이터센터&hl=ko', category: 'bigtech', icon: '📄' },
+
+  { url: 'https://news.google.com/rss/search?q=AI+광학+패키징&hl=ko', category: 'optic', icon: '📄' },
+  { url: 'https://news.google.com/rss/search?q=TSMC+CoWoS&hl=ko', category: 'optic', icon: '📄' },
+
+  { url: 'https://news.google.com/rss/search?q=연준+금리&hl=ko', category: 'macro', icon: '🏛️' },
+  { url: 'https://news.google.com/rss/search?q=유가&hl=ko', category: 'macro', icon: '🏛️' }
+];
+
 async function loadNews() {
   try {
     const localResponse = await fetch('news.json');
     const localNews = await localResponse.json();
 
-    const rssNews = await fetchFromRSS(
-      'https://news.google.com/rss/search?q=SK하이닉스&hl=ko',
-      'memory',
-      '📄'
+    const allRssNews = await Promise.all(
+      RSS_SOURCES.map(source =>
+        fetchFromRSS(source.url, source.category, source.icon)
+      )
     );
 
-    newsData = [...rssNews, ...localNews];
+    const flatRssNews = allRssNews.flat();
+
+    const seen = new Set();
+    const uniqueRssNews = flatRssNews.filter(item => {
+      if (seen.has(item.headline)) return false;
+      seen.add(item.headline);
+      return true;
+    });
+
+    newsData = [...uniqueRssNews, ...localNews];
 
     newsData.sort((a, b) => b.time.localeCompare(a.time));
 
