@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Stock Feed</title>
+  <style>
+    /* ====================================
+       기본 스타일 - 페이지 전체 모양 결정
+       ==================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0f1115;
+      color: #e8e8e8;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+      min-height: 100vh;
+      padding: 20px 12px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ====================================
+       채널 헤더 (상단 프로필 영역)
+       ==================================== */
+    .channel-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: #1a1d24;
+      border-radius: 12px 12px 0 0;
+      border-bottom: 1px solid #2a2d34;
+    }
+
+    .channel-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #2a4d8a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .channel-info {
+      flex: 1;
+    }
+
+    .channel-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #6da3e8;
+    }
+
+    .channel-desc {
+      font-size: 12px;
+      color: #8a8a8a;
+      margin-top: 2px;
+    }
+
+    .live-indicator {
+      font-size: 11px;
+      color: #6dd49e;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #6dd49e;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ====================================
+       통계 박스 (오늘 수집/핫이슈/실적)
+       ==================================== */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 12px 16px;
+      background: #1a1d24;
+    }
+
+    .stat {
+      background: #22252c;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #8a8a8a;
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #e0e0e0;
+    }
+
+    /* ====================================
+       필터 칩 (카테고리 선택)
+       ==================================== */
+    .filters {
+      display: flex;
+      gap: 6px;
+      padding: 12px 16px;
+      background: #1a1d24;
+      overflow-x: auto;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 14px;
+      background: #2a2d34;
+      color: #b0b0b0;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .filter-chip:hover {
+      background: #3a3d44;
+    }
+
+    .filter-chip.active {
+      background: #2a4d8a;
+      color: #fff;
+    }
+
+    /* ====================================
+       뉴스 섹션
+       ==================================== */
+    .news-section {
+      background: #1a1d24;
+      padding: 12px 16px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .news-item {
+      display: flex;
+      gap: 10px;
+      padding: 12px 0;
+      font-size: 14px;
+      line-height: 1.5;
+      border-bottom: 1px solid #2a2d34;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .news-item:hover {
+      background: #22252c;
+      margin: 0 -16px;
+      padding: 12px 16px;
+    }
+
+    .news-item:last-child {
+      border-bottom: none;
+    }
+
+    .news-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      width: 22px;
+    }
+
+    .news-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .news-time {
+      color: #8a8a8a;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    .news-headline {
+      color: #e0e0e0;
+    }
+
+    /* 종목 티커 배지 */
+    .ticker {
+      display: inline-block;
+      padding: 1px 6px;
+      background: #2a3d5c;
+      color: #6da3e8;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .ticker.hot {
+      background: #5c2a2a;
+      color: #e88a8a;
+    }
+
+    .ticker.green {
+      background: #1f4d3a;
+      color: #6dd49e;
+    }
+
+    /* 마지막 푸터 */
+    .footer {
+      background: #1a1d24;
+      padding: 14px 16px;
+      border-radius: 0 0 12px 12px;
+      text-align: center;
+      font-size: 12px;
+      color: #6a6a6a;
+    }
+
+    /* 모바일 최적화 */
+    @media (max-width: 480px) {
+      body { padding: 8px 0; }
+      .container { padding: 0 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 헤더 -->
+    <div class="channel-header">
+      <div class="channel-avatar">VB</div>
+      <div class="channel-info">
+        <div class="channel-name">MY STOCK FEED</div>
+        <div class="channel-desc">미국 주식 + 한국 반도체/전력</div>
+      </div>
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        라이브
+      </div>
+    </div>
+
+    <!-- 통계 -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">오늘 수집</div>
+        <div class="stat-value" id="stat-total">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">핫이슈</div>
+        <div class="stat-value" id="stat-hot">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">실적</div>
+        <div class="stat-value" id="stat-earning">0</div>
+      </div>
+    </div>
+
+    <!-- 필터 -->
+    <div class="filters">
+      <button class="filter-chip active" data-filter="all">전체</button>
+      <button class="filter-chip" data-filter="hot">🔥 핫이슈</button>
+      <button class="filter-chip" data-filter="earning">💥 실적</button>
+      <button class="filter-chip" data-filter="semi">반도체</button>
+      <button class="filter-chip" data-filter="power">전력</button>
+      <button class="filter-chip" data-filter="watch">관심종목</button>
+    </div>
+
+    <!-- 뉴스 리스트 -->
+    <div class="news-section">
+      <div class="section-title">📰 최신 뉴스</div>
+      <div id="news-list">
+        <!-- 자바스크립트가 여기에 뉴스를 채워넣음 -->
+      </div>
+    </div>
+
+    <!-- 푸터 -->
+    <div class="footer">
+      마지막 업데이트: <span id="last-update">-</span>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       데이터 - 일단 여기에 직접 적어둠
+       (나중에 자동 수집으로 바꿀 거예요)
+       ========================================================= */
+    const newsData = [
+      {
+        time: "05/04 09:12",
+        category: "hot",
+        icon: "🚨",
+        headline: "엔비디아, 5월 27일 1Q26 실적 발표 예정",
+        ticker: "NVDA",
+        tickerType: "hot"
+      },
+      {
+        time: "05/04 08:45",
+        category: "hot",
+        icon: "🚨",
+        headline: "백악관 'Ratepayer Protection Pledge' - 빅테크 7사 그리드 비용 부담 합의",
+        ticker: null,
+        tickerType: null
+      },
+      {
+        time: "05/04 06:30",
+        category: "earning",
+        icon: "💥",
+        headline: "아마존, 1Q26 실적 EPS $2.78 컨센서스 상회",
+        ticker: "AMZN",
+        tickerType: null
+      },
+      {
+        time: "05/04 06:15",
+        category: "earning",
+        icon: "💥",
+        headline: "마이크로소프트, 2026 capex $190B로 상향 - 메모리 가격 상승 인용",
+        ticker: "MSFT",
+        tickerType: null
+      },
+      {
+        time: "05/04 05:50",
+        category: "earning",
+        icon: "📈",
+        headline: "알파벳, AI 매출 +800% 급증 - 시간외 +10%",
+        ticker: "GOOGL",
+        tickerType: "green"
+      },
+      {
+        time: "05/04 05:30",
+        category: "earning",
+        icon: "📉",
+        headline: "메타, capex 상향에도 사용자 감소 - 시간외 -9%",
+        ticker: "META",
+        tickerType: "hot"
+      },
+      {
+        time: "05/04 05:12",
+        category: "watch",
+        icon: "📄",
+        headline: "LS일렉트릭, 블룸에너지와 3,190억원 배전 솔루션 계약 (오라클향)",
+        ticker: null,
+        tickerType: null
+      },
+      {
+        time: "05/03 17:34",
+        category: "semi",
+        icon: "📄",
+        headline: "SK하이닉스, HBM4 캐파 풀가동 - 마이크론 캐파 매진 보도",
+        ticker: null,
+        tickerType: null
+      },
+      {
+        time: "05/03 16:56",
+        category: "power",
+        icon: "📄",
+        headline: "HD현대일렉트릭, 765kV 변압기 미국향 추가 수주 보도",
+        ticker: null,
+        tickerType: null
+      },
+      {
+        time: "05/03 16:18",
+        category: "earning",
+        icon: "📄",
+        headline: "Quanta Services 1Q26 실적 - 수주잔고 $39.2B",
+        ticker: "PWR",
+        tickerType: null
+      },
+      {
+        time: "05/03 15:36",
+        category: "power",
+        icon: "📄",
+        headline: "두산에너빌리티, SMR 수주 본격화 기대감",
+        ticker: null,
+        tickerType: null
+      },
+      {
+        time: "05/03 13:49",
+        category: "hot",
+        icon: "🚨",
+        headline: "Burry, 빅테크 GPU 감가상각 회계 재차 비판",
+        ticker: null,
+        tickerType: null
+      }
+    ];
+
+    /* =========================================================
+       함수들 - 페이지를 그리는 코드
+       ========================================================= */
+
+    // 1. 통계 숫자 업데이트
+    function updateStats() {
+      document.getElementById('stat-total').textContent = newsData.length;
+      document.getElementById('stat-hot').textContent =
+        newsData.filter(n => n.category === 'hot').length;
+      document.getElementById('stat-earning').textContent =
+        newsData.filter(n => n.category === 'earning').length;
+    }
+
+    // 2. 뉴스 한 개를 HTML로 변환
+    function renderNewsItem(news) {
+      const tickerHtml = news.ticker
+        ? `<span class="ticker ${news.tickerType || ''}">${news.ticker}</span>`
+        : '';
+
+      return `
+        <div class="news-item">
+          <span class="news-icon">${news.icon}</span>
+          <div class="news-content">
+            <div class="news-time">${news.time}</div>
+            <div class="news-headline">${news.headline}${tickerHtml}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 3. 필터에 따라 뉴스 보여주기
+    function renderNews(filter = 'all') {
+      const filtered = filter === 'all'
+        ? newsData
+        : newsData.filter(n => n.category === filter);
+
+      const html = filtered.map(renderNewsItem).join('');
+      document.getElementById('news-list').innerHTML = html ||
+        '<div style="text-align: center; padding: 30px; color: #6a6a6a;">해당 카테고리 뉴스 없음</div>';
+    }
+
+    // 4. 마지막 업데이트 시간 표시
+    function updateTimestamp() {
+      const now = new Date();
+      const formatted = now.toLocaleString('ko-KR');
+      document.getElementById('last-update').textContent = formatted;
+    }
+
+    // 5. 필터 클릭 처리
+    function setupFilters() {
+      const chips = document.querySelectorAll('.filter-chip');
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          // 이전 활성화된 칩 제거
+          chips.forEach(c => c.classList.remove('active'));
+          // 클릭한 칩 활성화
+          chip.classList.add('active');
+          // 필터링된 뉴스 보여주기
+          renderNews(chip.dataset.filter);
+        });
+      });
+    }
+
+    /* =========================================================
+       페이지 시작!
+       ========================================================= */
+    updateStats();
+    renderNews();
+    updateTimestamp();
+    setupFilters();
+  </script>
+</body>
+</html>
