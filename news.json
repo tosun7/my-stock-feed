@@ -1,0 +1,130 @@
+[
+  {
+    "time": "05/05 10:00",
+    "category": "power",
+    "icon": "📄",
+    "headline": "효성중공업, 800kV GCB 미국 출시 - 765kV 송전망 핵심",
+    "ticker": null,
+    "tickerType": null
+  },
+  {
+    "time": "05/05 09:30",
+    "category": "macro",
+    "icon": "🏛️",
+    "headline": "정부, 전력반도체 7,500억 투입 - 90~95% 수입 의존 탈피",
+    "ticker": null,
+    "tickerType": null
+  },
+  {
+    "time": "05/04 09:12",
+    "category": "earning",
+    "icon": "🚨",
+    "headline": "엔비디아, 5월 27일 1Q26 실적 발표 예정 - 시장 주목",
+    "ticker": "NVDA",
+    "tickerType": "hot"
+  },
+  {
+    "time": "05/04 08:45",
+    "category": "macro",
+    "icon": "🏛️",
+    "headline": "백악관 'Ratepayer Protection Pledge' - 빅테크 7사 그리드 비용 부담 합의",
+    "ticker": null,
+    "tickerType": null
+  },
+  {
+    "time": "05/04 06:30",
+    "category": "earning",
+    "icon": "💥",
+    "headline": "아마존, 1Q26 실적 EPS $2.78 컨센서스 상회",
+    "ticker": "AMZN",
+    "tickerType": null
+  },
+  {
+    "time": "05/04 06:15",
+    "category": "bigtech",
+    "icon": "💥",
+    "headline": "MS, 2026 capex $190B로 상향 - 메모리 가격 상승 250억$ 인용",
+    "ticker": "MSFT",
+    "tickerType": null
+  },
+  {
+    "time": "05/04 05:50",
+    "category": "bigtech",
+    "icon": "📈",
+    "headline": "알파벳, AI 매출 +800% 급증 - 시간외 +10%",
+    "ticker": "GOOGL",
+    "tickerType": "green"
+  },
+  {
+    "time": "05/04 05:30",
+    "category": "bigtech",
+    "icon": "📉",
+    "headline": "메타, capex 상향에도 사용자 감소 - 시간외 -9%",
+    "ticker": "META",
+    "tickerType": "hot"
+  },
+  {
+    "time": "05/04 05:12",
+    "category": "power",
+    "icon": "📄",
+    "headline": "LS일렉트릭, 블룸에너지와 3,190억원 배전 솔루션 계약 (오라클향)",
+    "ticker": null,
+    "tickerType": null
+  },
+  {
+    "time": "05/03 17:34",
+    "category": "memory",
+    "icon": "📄",
+    "headline": "SK하이닉스, HBM4 캐파 풀가동 - 마이크론 캐파 매진 보도",
+    "ticker": null,
+    "tickerType": null
+  },
+  {
+    "time": "05/03 16:56",
+    "category": "power",
+    "icon": "📄",
+    "headline": "HD현대일렉트릭, 765kV 변압기 미국향 추가 수주 - 영업이익률 24.8%",
+    "ticker": null,
+    "tickerType": null
+  },
+  {
+    "time": "05/03 16:18",
+    "category": "earning",
+    "icon": "💥",
+    "headline": "Quanta Services 1Q26 실적 - 수주잔고 $39.2B",
+    "ticker": "PWR",
+    "tickerType": null
+  },
+  {
+    "time": "05/03 14:20",
+    "category": "optic",
+    "icon": "📄",
+    "headline": "AI 랙당 광섬유 10~36배 증가 - 인터커넥트 시장 확장",
+    "ticker": null,
+    "tickerType": null
+  },
+  {
+    "time": "05/03 13:49",
+    "category": "macro",
+    "icon": "⚠️",
+    "headline": "Burry, 빅테크 GPU 감가상각 회계 재차 비판 - $1,760억 추정",
+    "ticker": null,
+    "tickerType": null
+  },
+  {
+    "time": "05/03 11:30",
+    "category": "memory",
+    "icon": "📊",
+    "headline": "마이크론 HBM 캐파 2026 내내 매진 - 메모리 마진 50%+",
+    "ticker": "MU",
+    "tickerType": "green"
+  },
+  {
+    "time": "05/03 10:15",
+    "category": "macro",
+    "icon": "📊",
+    "headline": "PJM 캐파시티 가격 833% 폭등 - 전력 인프라 위기 부상",
+    "ticker": null,
+    "tickerType": null
+  }
+]
