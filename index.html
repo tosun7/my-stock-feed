@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Stock Feed</title>
   <style>
-    /* ====================================
-       기본 스타일 - 페이지 전체 모양 결정
-       ==================================== */
     * {
       margin: 0;
       padding: 0;
@@ -27,9 +24,6 @@
       margin: 0 auto;
     }
 
-    /* ====================================
-       채널 헤더 (상단 프로필 영역)
-       ==================================== */
     .channel-header {
       display: flex;
       align-items: center;
@@ -90,9 +84,6 @@
       50% { opacity: 0.4; }
     }
 
-    /* ====================================
-       통계 박스 (오늘 수집/핫이슈/실적)
-       ==================================== */
     .stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -120,9 +111,6 @@
       color: #e0e0e0;
     }
 
-    /* ====================================
-       필터 칩 (카테고리 선택)
-       ==================================== */
     .filters {
       display: flex;
       gap: 6px;
@@ -153,9 +141,6 @@
       color: #fff;
     }
 
-    /* ====================================
-       뉴스 섹션
-       ==================================== */
     .news-section {
       background: #1a1d24;
       padding: 12px 16px;
@@ -213,7 +198,6 @@
       color: #e0e0e0;
     }
 
-    /* 종목 티커 배지 */
     .ticker {
       display: inline-block;
       padding: 1px 6px;
@@ -236,7 +220,6 @@
       color: #6dd49e;
     }
 
-    /* 마지막 푸터 */
     .footer {
       background: #1a1d24;
       padding: 14px 16px;
@@ -246,7 +229,6 @@
       color: #6a6a6a;
     }
 
-    /* 모바일 최적화 */
     @media (max-width: 480px) {
       body { padding: 8px 0; }
       .container { padding: 0 8px; }
@@ -255,12 +237,11 @@
 </head>
 <body>
   <div class="container">
-    <!-- 헤더 -->
     <div class="channel-header">
       <div class="channel-avatar">VB</div>
       <div class="channel-info">
         <div class="channel-name">MY STOCK FEED</div>
-        <div class="channel-desc">미국 주식 + 한국 반도체/전력</div>
+        <div class="channel-desc">AI 인프라 + 메모리 + 매크로</div>
       </div>
       <div class="live-indicator">
         <span class="live-dot"></span>
@@ -268,64 +249,56 @@
       </div>
     </div>
 
-    <!-- 통계 -->
     <div class="stats">
       <div class="stat">
         <div class="stat-label">오늘 수집</div>
         <div class="stat-value" id="stat-total">0</div>
       </div>
       <div class="stat">
-        <div class="stat-label">핫이슈</div>
-        <div class="stat-value" id="stat-hot">0</div>
-      </div>
-      <div class="stat">
         <div class="stat-label">실적</div>
         <div class="stat-value" id="stat-earning">0</div>
       </div>
-    </div>
-
-    <!-- 필터 -->
-    <div class="filters">
-      <button class="filter-chip active" data-filter="all">전체</button>
-      <button class="filter-chip" data-filter="hot">🔥 핫이슈</button>
-      <button class="filter-chip" data-filter="earning">💥 실적</button>
-      <button class="filter-chip" data-filter="semi">반도체</button>
-      <button class="filter-chip" data-filter="power">전력</button>
-      <button class="filter-chip" data-filter="watch">관심종목</button>
-    </div>
-
-    <!-- 뉴스 리스트 -->
-    <div class="news-section">
-      <div class="section-title">📰 최신 뉴스</div>
-      <div id="news-list">
-        <!-- 자바스크립트가 여기에 뉴스를 채워넣음 -->
+      <div class="stat">
+        <div class="stat-label">매크로</div>
+        <div class="stat-value" id="stat-macro">0</div>
       </div>
     </div>
 
-    <!-- 푸터 -->
+    <div class="filters">
+      <button class="filter-chip active" data-filter="all">전체</button>
+      <button class="filter-chip" data-filter="memory">메모리/HBM</button>
+      <button class="filter-chip" data-filter="power">AI 전력</button>
+      <button class="filter-chip" data-filter="optic">광학/패키징</button>
+      <button class="filter-chip" data-filter="bigtech">빅테크 capex</button>
+      <button class="filter-chip" data-filter="earning">실적시즌</button>
+      <button class="filter-chip" data-filter="macro">매크로</button>
+    </div>
+
+    <div class="news-section">
+      <div class="section-title">📰 최신 뉴스</div>
+      <div id="news-list">
+      </div>
+    </div>
+
     <div class="footer">
       마지막 업데이트: <span id="last-update">-</span>
     </div>
   </div>
 
   <script>
-    /* =========================================================
-       데이터 - 일단 여기에 직접 적어둠
-       (나중에 자동 수집으로 바꿀 거예요)
-       ========================================================= */
     const newsData = [
       {
         time: "05/04 09:12",
-        category: "hot",
+        category: "earning",
         icon: "🚨",
-        headline: "엔비디아, 5월 27일 1Q26 실적 발표 예정",
+        headline: "엔비디아, 5월 27일 1Q26 실적 발표 예정 - 시장 주목",
         ticker: "NVDA",
         tickerType: "hot"
       },
       {
         time: "05/04 08:45",
-        category: "hot",
-        icon: "🚨",
+        category: "macro",
+        icon: "🏛️",
         headline: "백악관 'Ratepayer Protection Pledge' - 빅테크 7사 그리드 비용 부담 합의",
         ticker: null,
         tickerType: null
@@ -340,15 +313,15 @@
       },
       {
         time: "05/04 06:15",
-        category: "earning",
+        category: "bigtech",
         icon: "💥",
-        headline: "마이크로소프트, 2026 capex $190B로 상향 - 메모리 가격 상승 인용",
+        headline: "MS, 2026 capex $190B로 상향 - 메모리 가격 상승 250억$ 인용",
         ticker: "MSFT",
         tickerType: null
       },
       {
         time: "05/04 05:50",
-        category: "earning",
+        category: "bigtech",
         icon: "📈",
         headline: "알파벳, AI 매출 +800% 급증 - 시간외 +10%",
         ticker: "GOOGL",
@@ -356,7 +329,7 @@
       },
       {
         time: "05/04 05:30",
-        category: "earning",
+        category: "bigtech",
         icon: "📉",
         headline: "메타, capex 상향에도 사용자 감소 - 시간외 -9%",
         ticker: "META",
@@ -364,7 +337,7 @@
       },
       {
         time: "05/04 05:12",
-        category: "watch",
+        category: "power",
         icon: "📄",
         headline: "LS일렉트릭, 블룸에너지와 3,190억원 배전 솔루션 계약 (오라클향)",
         ticker: null,
@@ -372,7 +345,7 @@
       },
       {
         time: "05/03 17:34",
-        category: "semi",
+        category: "memory",
         icon: "📄",
         headline: "SK하이닉스, HBM4 캐파 풀가동 - 마이크론 캐파 매진 보도",
         ticker: null,
@@ -382,14 +355,14 @@
         time: "05/03 16:56",
         category: "power",
         icon: "📄",
-        headline: "HD현대일렉트릭, 765kV 변압기 미국향 추가 수주 보도",
+        headline: "HD현대일렉트릭, 765kV 변압기 미국향 추가 수주 - 영업이익률 24.8%",
         ticker: null,
         tickerType: null
       },
       {
         time: "05/03 16:18",
-        category: "earning",
-        icon: "📄",
+        category: "power",
+        icon: "💥",
         headline: "Quanta Services 1Q26 실적 - 수주잔고 $39.2B",
         ticker: "PWR",
         tickerType: null
@@ -403,29 +376,55 @@
         tickerType: null
       },
       {
+        time: "05/03 14:20",
+        category: "optic",
+        icon: "📄",
+        headline: "AI 랙당 광섬유 10~36배 증가 - 인터커넥트 시장 확장",
+        ticker: null,
+        tickerType: null
+      },
+      {
         time: "05/03 13:49",
-        category: "hot",
-        icon: "🚨",
-        headline: "Burry, 빅테크 GPU 감가상각 회계 재차 비판",
+        category: "macro",
+        icon: "⚠️",
+        headline: "Burry, 빅테크 GPU 감가상각 회계 재차 비판 - $1,760억 추정",
+        ticker: null,
+        tickerType: null
+      },
+      {
+        time: "05/03 12:55",
+        category: "earning",
+        icon: "📄",
+        headline: "Eaton, 12억$ 캐파 확장 완료 임박 - 변압기 부족 대응",
+        ticker: "ETN",
+        tickerType: null
+      },
+      {
+        time: "05/03 11:30",
+        category: "memory",
+        icon: "📊",
+        headline: "마이크론 HBM 캐파 2026 내내 매진 - 메모리 마진 50%+",
+        ticker: "MU",
+        tickerType: "green"
+      },
+      {
+        time: "05/03 10:15",
+        category: "macro",
+        icon: "📊",
+        headline: "PJM 캐파시티 가격 833% 폭등 - 전력 인프라 위기 부상",
         ticker: null,
         tickerType: null
       }
     ];
 
-    /* =========================================================
-       함수들 - 페이지를 그리는 코드
-       ========================================================= */
-
-    // 1. 통계 숫자 업데이트
     function updateStats() {
       document.getElementById('stat-total').textContent = newsData.length;
-      document.getElementById('stat-hot').textContent =
-        newsData.filter(n => n.category === 'hot').length;
       document.getElementById('stat-earning').textContent =
         newsData.filter(n => n.category === 'earning').length;
+      document.getElementById('stat-macro').textContent =
+        newsData.filter(n => n.category === 'macro').length;
     }
 
-    // 2. 뉴스 한 개를 HTML로 변환
     function renderNewsItem(news) {
       const tickerHtml = news.ticker
         ? `<span class="ticker ${news.tickerType || ''}">${news.ticker}</span>`
@@ -442,7 +441,6 @@
       `;
     }
 
-    // 3. 필터에 따라 뉴스 보여주기
     function renderNews(filter = 'all') {
       const filtered = filter === 'all'
         ? newsData
@@ -453,31 +451,23 @@
         '<div style="text-align: center; padding: 30px; color: #6a6a6a;">해당 카테고리 뉴스 없음</div>';
     }
 
-    // 4. 마지막 업데이트 시간 표시
     function updateTimestamp() {
       const now = new Date();
       const formatted = now.toLocaleString('ko-KR');
       document.getElementById('last-update').textContent = formatted;
     }
 
-    // 5. 필터 클릭 처리
     function setupFilters() {
       const chips = document.querySelectorAll('.filter-chip');
       chips.forEach(chip => {
         chip.addEventListener('click', () => {
-          // 이전 활성화된 칩 제거
           chips.forEach(c => c.classList.remove('active'));
-          // 클릭한 칩 활성화
           chip.classList.add('active');
-          // 필터링된 뉴스 보여주기
           renderNews(chip.dataset.filter);
         });
       });
     }
 
-    /* =========================================================
-       페이지 시작!
-       ========================================================= */
     updateStats();
     renderNews();
     updateTimestamp();
