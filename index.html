@@ -33,7 +33,6 @@
     .channel-name { font-size: 15px; font-weight: 600; color: #6da3e8; }
     .channel-desc { font-size: 12px; color: #8a8a8a; margin-top: 2px; }
 
-    /* 네비게이션 */
     .nav-links {
       display: flex; gap: 6px; margin-right: 12px;
     }
@@ -110,6 +109,15 @@
     .section-title {
       font-size: 15px; font-weight: 600;
       margin-bottom: 12px; color: #f0f0f0;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .refresh-indicator {
+      font-size: 10px; color: #6a6a6a;
+      font-weight: 400;
+      margin-left: auto;
+    }
+    .refresh-indicator.refreshing {
+      color: #6da3e8;
     }
     .news-item {
       display: flex; gap: 10px; padding: 12px 0;
@@ -155,13 +163,6 @@
     }
     .add-btn:hover { background: #3a5d9a; }
 
-    .group-header {
-      font-size: 11px; color: #8a8a8a;
-      margin: 8px 0 4px; padding: 0 4px;
-    }
-    .group-header.first { margin-top: 0; }
-
-    /* 미국 주식 */
     .us-stock {
       padding: 8px 4px;
       border-bottom: 1px solid #2a2d34;
@@ -198,32 +199,6 @@
     .price-loading {
       font-size: 10px; color: #6a6a6a;
       font-style: italic;
-    }
-
-    /* 한국 주식 - 전체 클릭 가능 */
-    .kr-stock {
-      padding: 8px 4px;
-      border-bottom: 1px solid #2a2d34;
-      display: flex; align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-      text-decoration: none;
-      color: inherit;
-      border-radius: 4px;
-    }
-    .kr-stock:hover {
-      background: #22252c;
-      padding: 8px 8px;
-      margin: 0 -4px;
-    }
-    .kr-stock:last-child { border-bottom: none; }
-
-    .kr-arrow {
-      font-size: 11px;
-      color: #6da3e8;
-      flex-shrink: 0;
     }
 
     .delete-btn {
@@ -265,13 +240,32 @@
     }
     .quick-chip:hover { background: #3a3d44; }
 
+    /* 이벤트 캘린더 */
     .calendar-item {
       padding: 6px 0; font-size: 12px;
       border-bottom: 1px solid #2a2d34;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 6px;
     }
     .calendar-item:last-child { border-bottom: none; }
+    .calendar-content { flex: 1; min-width: 0; }
     .calendar-date { color: #6da3e8; font-weight: 500; font-size: 11px; }
     .calendar-event { color: #e0e0e0; margin-top: 2px; }
+
+    .event-form {
+      display: none; flex-direction: column;
+      gap: 6px; margin-top: 8px;
+      padding: 10px; background: #22252c;
+      border-radius: 8px;
+    }
+    .event-form.show { display: flex; }
+    .event-form input {
+      width: 100%; padding: 6px 10px;
+      background: #1a1d24; border: 1px solid #2a2d34;
+      border-radius: 6px; color: #e0e0e0; font-size: 12px;
+    }
+    .event-form input::placeholder { color: #6a6a6a; }
 
     .placeholder-msg {
       font-size: 11px; color: #6a6a6a;
@@ -335,7 +329,10 @@
         </div>
 
         <div class="news-section">
-          <div class="section-title">📰 최신 뉴스</div>
+          <div class="section-title">
+            <span>📰 최신 뉴스</span>
+            <span class="refresh-indicator" id="refresh-status">10분마다 자동 갱신</span>
+          </div>
           <div id="news-list"></div>
         </div>
       </div>
@@ -344,7 +341,7 @@
 
         <div class="sidebar-box">
           <div class="sidebar-title">
-            <span>📊 관심 종목</span>
+            <span>📊 미국 관심 종목</span>
             <button class="add-btn" id="toggle-add-btn">+ 추가</button>
           </div>
 
@@ -352,7 +349,7 @@
 
           <div class="add-form" id="add-form">
             <input type="text" class="add-input" id="add-input"
-                   placeholder="미국: NASDAQ:NVDA / 한국: KRX:005930">
+                   placeholder="예: NASDAQ:NVDA, NYSE:GEV">
             <div class="add-actions">
               <button class="btn-confirm" id="confirm-add">추가</button>
               <button class="btn-cancel" id="cancel-add">취소</button>
@@ -361,12 +358,6 @@
               빠른 추가:
             </div>
             <div class="quick-add">
-              <button class="quick-chip" data-symbol="KRX:005930" data-name="삼성전자">삼성전자</button>
-              <button class="quick-chip" data-symbol="KRX:000660" data-name="SK하이닉스">SK하이닉스</button>
-              <button class="quick-chip" data-symbol="KRX:010120" data-name="LS일렉트릭">LS일렉</button>
-              <button class="quick-chip" data-symbol="KRX:267260" data-name="HD현대일렉">HD현대일렉</button>
-              <button class="quick-chip" data-symbol="KRX:298040" data-name="효성중공업">효성중공업</button>
-              <button class="quick-chip" data-symbol="KRX:034020" data-name="두산에너빌">두산에너빌</button>
               <button class="quick-chip" data-symbol="NASDAQ:NVDA" data-name="NVIDIA">NVDA</button>
               <button class="quick-chip" data-symbol="NASDAQ:MSFT" data-name="Microsoft">MSFT</button>
               <button class="quick-chip" data-symbol="NASDAQ:GOOGL" data-name="Alphabet">GOOGL</button>
@@ -376,28 +367,27 @@
               <button class="quick-chip" data-symbol="NYSE:ETN" data-name="Eaton">ETN</button>
               <button class="quick-chip" data-symbol="NYSE:TSM" data-name="TSMC">TSM</button>
               <button class="quick-chip" data-symbol="NASDAQ:MU" data-name="Micron">MU</button>
+              <button class="quick-chip" data-symbol="NYSE:PWR" data-name="Quanta">PWR</button>
+              <button class="quick-chip" data-symbol="NASDAQ:AVGO" data-name="Broadcom">AVGO</button>
             </div>
           </div>
         </div>
 
+        <!-- 다가오는 이벤트 (편집 가능) -->
         <div class="sidebar-box">
-          <div class="sidebar-title">📅 다가오는 이벤트</div>
-          <div id="calendar-list">
-            <div class="calendar-item">
-              <div class="calendar-date">5/27 (화)</div>
-              <div class="calendar-event">엔비디아 1Q26 실적</div>
-            </div>
-            <div class="calendar-item">
-              <div class="calendar-date">6/4 (수)</div>
-              <div class="calendar-event">FOMC 금리 결정</div>
-            </div>
-            <div class="calendar-item">
-              <div class="calendar-date">7/22-25</div>
-              <div class="calendar-event">빅테크 2Q 실적 시작</div>
-            </div>
-            <div class="calendar-item">
-              <div class="calendar-date">8월 중</div>
-              <div class="calendar-event">잭슨홀 미팅</div>
+          <div class="sidebar-title">
+            <span>📅 다가오는 이벤트</span>
+            <button class="add-btn" id="toggle-event-btn">+ 추가</button>
+          </div>
+
+          <div id="event-list"></div>
+
+          <div class="event-form" id="event-form">
+            <input type="text" id="event-date" placeholder="날짜 (예: 5/27 (화))">
+            <input type="text" id="event-name" placeholder="이벤트명 (예: 엔비디아 1Q26 실적)">
+            <div class="add-actions">
+              <button class="btn-confirm" id="confirm-event">추가</button>
+              <button class="btn-cancel" id="cancel-event">취소</button>
             </div>
           </div>
         </div>
@@ -418,13 +408,10 @@
   </div>
 
   <script>
+    /* ============================================
+       관심 종목 (미국 주식만)
+       ============================================ */
     const DEFAULT_WATCHLIST = [
-      { symbol: 'KRX:000660', name: 'SK하이닉스' },
-      { symbol: 'KRX:005930', name: '삼성전자' },
-      { symbol: 'KRX:010120', name: 'LS일렉트릭' },
-      { symbol: 'KRX:267260', name: 'HD현대일렉' },
-      { symbol: 'KRX:298040', name: '효성중공업' },
-      { symbol: 'KRX:034020', name: '두산에너빌' },
       { symbol: 'NASDAQ:NVDA', name: 'NVIDIA' },
       { symbol: 'NASDAQ:MSFT', name: 'Microsoft' },
       { symbol: 'NASDAQ:GOOGL', name: 'Alphabet' },
@@ -451,14 +438,11 @@
 
     let watchlist = loadWatchlist();
 
-    function isKoreanStock(symbol) {
-      return symbol.startsWith('KRX:') || symbol.startsWith('KOSDAQ:');
-    }
-
-    function getNaverUrl(symbol) {
-      const code = symbol.split(':')[1];
-      return `https://finance.naver.com/item/main.nhn?code=${code}`;
-    }
+    watchlist = watchlist.filter(item =>
+      !item.symbol.startsWith('KRX:') &&
+      !item.symbol.startsWith('KOSDAQ:')
+    );
+    saveWatchlist(watchlist);
 
     async function fetchUSPrice(symbol) {
       const ticker = symbol.split(':')[1];
@@ -498,54 +482,21 @@
         return;
       }
 
-      const usStocks = watchlist.filter(item => !isKoreanStock(item.symbol));
-      const krStocks = watchlist.filter(item => isKoreanStock(item.symbol));
-
-      let html = '';
-
-      if (usStocks.length > 0) {
-        html += '<div class="group-header first">미국 주식 (실시간)</div>';
-        html += usStocks.map(item => {
-          const idx = watchlist.indexOf(item);
-          return `
-            <div class="us-stock" data-symbol="${item.symbol}">
-              <div class="stock-info">
-                <span class="stock-symbol">${item.symbol.split(':')[1]}</span>
-                <span class="stock-name">${item.name}</span>
-              </div>
-              <div class="stock-price-area" id="price-${idx}">
-                <div class="price-loading">로딩...</div>
-              </div>
-              <button class="delete-btn" data-idx="${idx}">🗑️</button>
-            </div>
-          `;
-        }).join('');
-      }
-
-      if (krStocks.length > 0) {
-        html += '<div class="group-header">한국 주식 (클릭 → 네이버)</div>';
-        html += krStocks.map(item => {
-          const idx = watchlist.indexOf(item);
-          const code = item.symbol.split(':')[1];
-          return `
-            <a href="${getNaverUrl(item.symbol)}" target="_blank" class="kr-stock">
-              <div class="stock-info">
-                <span class="stock-symbol">${code}</span>
-                <span class="stock-name">${item.name}</span>
-              </div>
-              <span class="kr-arrow">↗</span>
-              <button class="delete-btn" data-idx="${idx}" onclick="event.preventDefault(); event.stopPropagation();">🗑️</button>
-            </a>
-          `;
-        }).join('');
-      }
-
-      container.innerHTML = html;
+      container.innerHTML = watchlist.map((item, idx) => `
+        <div class="us-stock">
+          <div class="stock-info">
+            <span class="stock-symbol">${item.symbol.split(':')[1]}</span>
+            <span class="stock-name">${item.name}</span>
+          </div>
+          <div class="stock-price-area" id="price-${idx}">
+            <div class="price-loading">로딩...</div>
+          </div>
+          <button class="delete-btn" data-idx="${idx}">🗑️</button>
+        </div>
+      `).join('');
 
       container.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
+        btn.addEventListener('click', () => {
           const idx = parseInt(btn.dataset.idx);
           watchlist.splice(idx, 1);
           saveWatchlist(watchlist);
@@ -560,10 +511,8 @@
     }
 
     async function loadAllUSPrices() {
-      const usStocks = watchlist.filter(item => !isKoreanStock(item.symbol));
-
-      for (const item of usStocks) {
-        const idx = watchlist.indexOf(item);
+      for (let idx = 0; idx < watchlist.length; idx++) {
+        const item = watchlist[idx];
         const priceEl = document.getElementById(`price-${idx}`);
         if (!priceEl) continue;
 
@@ -595,6 +544,10 @@
     }
 
     function addSymbol(symbol, name) {
+      if (symbol.startsWith('KRX:') || symbol.startsWith('KOSDAQ:')) {
+        alert('한국 주식은 추가할 수 없습니다.');
+        return;
+      }
       if (watchlist.some(item => item.symbol === symbol)) {
         alert('이미 추가된 종목입니다.');
         return;
@@ -621,7 +574,7 @@
         const value = addInput.value.trim();
         if (!value) return;
         if (!value.includes(':')) {
-          alert('형식: 거래소:티커 (예: NASDAQ:NVDA, KRX:005930)');
+          alert('형식: 거래소:티커 (예: NASDAQ:NVDA)');
           return;
         }
         const ticker = value.split(':')[1];
@@ -649,10 +602,110 @@
       });
     }
 
+    /* ============================================
+       다가오는 이벤트 (편집 가능)
+       ============================================ */
+    const DEFAULT_EVENTS = [
+      { date: "5/27 (화)", event: "엔비디아 1Q26 실적", sortKey: "2026-05-27" },
+      { date: "6/4 (수)", event: "FOMC 금리 결정", sortKey: "2026-06-04" },
+      { date: "7/22-25", event: "빅테크 2Q 실적 시작", sortKey: "2026-07-22" },
+      { date: "8월 중", event: "잭슨홀 미팅", sortKey: "2026-08-15" }
+    ];
+
+    function loadEvents() {
+      const saved = localStorage.getItem('myEvents');
+      if (saved) {
+        try { return JSON.parse(saved); }
+        catch (e) { console.error('이벤트 로드 실패:', e); }
+      }
+      return [...DEFAULT_EVENTS];
+    }
+
+    function saveEvents(list) {
+      localStorage.setItem('myEvents', JSON.stringify(list));
+    }
+
+    let events = loadEvents();
+
+    function renderEvents() {
+      const container = document.getElementById('event-list');
+
+      if (events.length === 0) {
+        container.innerHTML = '<div class="placeholder-msg">이벤트를 추가해보세요</div>';
+        return;
+      }
+
+      container.innerHTML = events.map((item, idx) => `
+        <div class="calendar-item">
+          <div class="calendar-content">
+            <div class="calendar-date">${item.date}</div>
+            <div class="calendar-event">${item.event}</div>
+          </div>
+          <button class="delete-btn" data-idx="${idx}">🗑️</button>
+        </div>
+      `).join('');
+
+      container.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.dataset.idx);
+          if (confirm('이 이벤트를 삭제하시겠습니까?')) {
+            events.splice(idx, 1);
+            saveEvents(events);
+            renderEvents();
+          }
+        });
+      });
+    }
+
+    function setupEventForm() {
+      const toggleBtn = document.getElementById('toggle-event-btn');
+      const eventForm = document.getElementById('event-form');
+      const dateInput = document.getElementById('event-date');
+      const nameInput = document.getElementById('event-name');
+      const confirmBtn = document.getElementById('confirm-event');
+      const cancelBtn = document.getElementById('cancel-event');
+
+      toggleBtn.addEventListener('click', () => {
+        eventForm.classList.toggle('show');
+        if (eventForm.classList.contains('show')) dateInput.focus();
+      });
+
+      confirmBtn.addEventListener('click', () => {
+        const date = dateInput.value.trim();
+        const name = nameInput.value.trim();
+        if (!date || !name) {
+          alert('날짜와 이벤트명을 모두 입력해주세요.');
+          return;
+        }
+        events.push({ date, event: name, sortKey: date });
+        saveEvents(events);
+        renderEvents();
+        dateInput.value = '';
+        nameInput.value = '';
+        eventForm.classList.remove('show');
+      });
+
+      cancelBtn.addEventListener('click', () => {
+        dateInput.value = '';
+        nameInput.value = '';
+        eventForm.classList.remove('show');
+      });
+
+      [dateInput, nameInput].forEach(input => {
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') confirmBtn.click();
+        });
+      });
+    }
+
+    /* 5분마다 미국 가격 자동 갱신 */
     setInterval(() => {
       loadAllUSPrices();
     }, 5 * 60 * 1000);
 
+    /* ============================================
+       뉴스 피드
+       ============================================ */
     let newsData = [];
 
     function isJunkNews(headline) {
@@ -913,7 +966,20 @@
       });
     }
 
-    async function loadNews() {
+    /* 현재 활성 필터 추적 */
+    function getActiveFilter() {
+      const active = document.querySelector('.filter-chip.active');
+      return active ? active.dataset.filter : 'all';
+    }
+
+    async function loadNews(isAutoRefresh = false) {
+      const refreshStatus = document.getElementById('refresh-status');
+
+      if (isAutoRefresh) {
+        refreshStatus.textContent = '⏳ 갱신 중...';
+        refreshStatus.classList.add('refreshing');
+      }
+
       try {
         const localResponse = await fetch('news.json');
         const localNews = await localResponse.json();
@@ -932,15 +998,35 @@
         newsData = [...uniqueRssNews, ...localNews];
         newsData.sort((a, b) => getTimestamp(b.time) - getTimestamp(a.time));
         updateStats();
-        renderNews();
+        renderNews(getActiveFilter());
         updateTimestamp();
+
+        if (isAutoRefresh) {
+          refreshStatus.textContent = '✓ 방금 갱신됨';
+          setTimeout(() => {
+            refreshStatus.classList.remove('refreshing');
+            refreshStatus.textContent = '10분마다 자동 갱신';
+          }, 3000);
+        }
       } catch (error) {
         console.error('뉴스 불러오기 실패:', error);
+        if (isAutoRefresh) {
+          refreshStatus.textContent = '갱신 실패';
+          refreshStatus.classList.remove('refreshing');
+        }
       }
     }
 
+    /* 10분마다 뉴스 자동 갱신 */
+    setInterval(() => {
+      loadNews(true);
+    }, 10 * 60 * 1000);
+
+    /* 페이지 시작 */
     renderWatchlist();
     setupAddForm();
+    renderEvents();
+    setupEventForm();
     loadAllUSPrices();
     loadNews();
     setupFilters();

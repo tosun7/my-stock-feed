@@ -134,7 +134,6 @@
       font-style: italic;
     }
 
-    /* 메인 그리드 - 섹터(왼) + 블로그 RSS(오) */
     .content-grid {
       display: grid;
       grid-template-columns: 2fr 1fr;
@@ -267,12 +266,28 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      justify-content: space-between;
     }
 
     .blog-subtitle {
       font-size: 11px;
       color: #8a8a8a;
       margin-bottom: 12px;
+    }
+
+    .translate-toggle {
+      font-size: 10px;
+      padding: 3px 8px;
+      background: #2a4d8a;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .translate-toggle:hover { background: #3a5d9a; }
+    .translate-toggle.off {
+      background: #2a2d34;
+      color: #b0b0b0;
     }
 
     .blog-item {
@@ -302,6 +317,14 @@
       font-size: 12px;
       color: #e0e0e0;
       line-height: 1.4;
+    }
+
+    .blog-headline-original {
+      font-size: 10px;
+      color: #6a6a6a;
+      margin-top: 4px;
+      line-height: 1.4;
+      font-style: italic;
     }
 
     .blog-loading {
@@ -363,7 +386,68 @@
   </div>
 
   <script>
-    /* 회사별 블로그 RSS 매핑 */
+    /* ============================================
+       자동 번역 (Google Translate 비공식 API)
+       ============================================ */
+
+    // 번역 캐시 (localStorage 사용)
+    const TRANSLATION_CACHE_KEY = 'translationCache';
+
+    function loadTranslationCache() {
+      try {
+        const saved = localStorage.getItem(TRANSLATION_CACHE_KEY);
+        return saved ? JSON.parse(saved) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveTranslationCache(cache) {
+      try {
+        localStorage.setItem(TRANSLATION_CACHE_KEY, JSON.stringify(cache));
+      } catch (e) {
+        console.error('번역 캐시 저장 실패:', e);
+      }
+    }
+
+    let translationCache = loadTranslationCache();
+
+    async function translateText(text) {
+      // 캐시 확인
+      if (translationCache[text]) {
+        return translationCache[text];
+      }
+
+      // Google Translate 비공식 API
+      const apiUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ko&dt=t&q=${encodeURIComponent(text)}`;
+
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        // 응답 구조: [[["번역된 텍스트", "원문", ...]], ...]
+        if (data && data[0] && data[0][0] && data[0][0][0]) {
+          const translated = data[0]
+            .map(item => item[0])
+            .filter(t => t)
+            .join('');
+
+          // 캐시에 저장
+          translationCache[text] = translated;
+          saveTranslationCache(translationCache);
+
+          return translated;
+        }
+        return null;
+      } catch (error) {
+        console.error('번역 실패:', error);
+        return null;
+      }
+    }
+
+    /* ============================================
+       회사별 RSS 매핑
+       ============================================ */
     const COMPANY_RSS = {
       'nvidia': [
         {
@@ -377,13 +461,11 @@
           icon: '📢'
         }
       ]
-      // 나중에 다른 회사 추가 가능:
-      // 'microsoft': [...],
-      // 'google': [...]
     };
 
     let portfolioData = null;
     let currentCompanyId = null;
+    let translateEnabled = localStorage.getItem('translateEnabled') !== 'false'; // 기본 ON
 
     async function loadPortfolios() {
       try {
@@ -449,7 +531,6 @@
         </div>
       `;
 
-      // 메인 콘텐츠: 섹터 카드 + 블로그 사이드바
       const mainContent = `
         <div class="content-grid">
           <div class="sectors-grid">
@@ -463,7 +544,6 @@
 
       content.innerHTML = summaryHtml + mainContent;
 
-      // 해당 회사의 블로그 RSS 로드
       loadCompanyBlogs(companyId);
     }
 
@@ -510,20 +590,48 @@
         `;
       }
 
-      return sources.map(source => `
-        <div class="blog-box">
-          <div class="blog-title">${source.icon} ${source.name}</div>
-          <div class="blog-subtitle">최신 공식 소식</div>
-          <div id="blog-${source.url.replace(/[^a-z0-9]/gi, '_')}" class="blog-list">
-            <div class="blog-loading">로딩 중...</div>
+      return sources.map((source, idx) => {
+        const containerId = 'blog-' + source.url.replace(/[^a-z0-9]/gi, '_');
+        const showToggle = idx === 0; // 첫 번째 박스에만 번역 토글
+        return `
+          <div class="blog-box">
+            <div class="blog-title">
+              <span>${source.icon} ${source.name}</span>
+              ${showToggle ? `<button class="translate-toggle ${translateEnabled ? '' : 'off'}" id="translate-toggle">
+                ${translateEnabled ? '🔠 한국어 ON' : '🔠 한국어 OFF'}
+              </button>` : ''}
+            </div>
+            <div class="blog-subtitle">최신 공식 소식</div>
+            <div id="${containerId}" class="blog-list">
+              <div class="blog-loading">로딩 중...</div>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+    }
+
+    function setupTranslateToggle() {
+      const toggle = document.getElementById('translate-toggle');
+      if (!toggle) return;
+
+      toggle.addEventListener('click', () => {
+        translateEnabled = !translateEnabled;
+        localStorage.setItem('translateEnabled', translateEnabled);
+
+        toggle.classList.toggle('off', !translateEnabled);
+        toggle.textContent = translateEnabled ? '🔠 한국어 ON' : '🔠 한국어 OFF';
+
+        // 페이지 다시 로드
+        loadCompanyBlogs(currentCompanyId);
+      });
     }
 
     async function loadCompanyBlogs(companyId) {
       const sources = COMPANY_RSS[companyId];
       if (!sources) return;
+
+      // 토글 버튼 이벤트 연결
+      setTimeout(setupTranslateToggle, 100);
 
       for (const source of sources) {
         const containerId = 'blog-' + source.url.replace(/[^a-z0-9]/gi, '_');
@@ -541,23 +649,62 @@
           }
 
           const items = data.items.slice(0, 8);
+
+          // 일단 영어로 먼저 표시 (빠른 응답)
           container.innerHTML = items.map(item => {
             const date = new Date(item.pubDate);
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
             const dateStr = `${date.getFullYear()}.${month}.${day}`;
+            const itemId = 'item-' + Math.random().toString(36).substr(2, 9);
 
             return `
-              <a href="${item.link}" target="_blank" class="blog-item">
+              <a href="${item.link}" target="_blank" class="blog-item" id="${itemId}">
                 <div class="blog-date">${dateStr}</div>
                 <div class="blog-headline">${item.title}</div>
               </a>
             `;
           }).join('');
+
+          // 번역 활성화 상태면 번역 진행
+          if (translateEnabled) {
+            translateBlogItems(items, container);
+          }
         } catch (error) {
           console.error('블로그 로드 실패:', source.name, error);
           container.innerHTML = '<div class="blog-loading">로드 실패</div>';
         }
+      }
+    }
+
+    async function translateBlogItems(items, container) {
+      const blogItems = container.querySelectorAll('.blog-item');
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const blogItem = blogItems[i];
+        if (!blogItem) continue;
+
+        const translated = await translateText(item.title);
+        if (!translated || translated === item.title) {
+          // 번역 실패하거나 이미 한국어면 그대로
+          continue;
+        }
+
+        // 번역 결과로 교체 + 원문 작게 표시
+        const date = new Date(item.pubDate);
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const dateStr = `${date.getFullYear()}.${month}.${day}`;
+
+        blogItem.innerHTML = `
+          <div class="blog-date">${dateStr}</div>
+          <div class="blog-headline">${translated}</div>
+          <div class="blog-headline-original">${item.title}</div>
+        `;
+
+        // 너무 빠른 호출 방지
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
 
