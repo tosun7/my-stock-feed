@@ -339,6 +339,38 @@
       });
     }
 
+function isJunkNews(headline) {
+  if (!headline || headline.length < 10) return true;
+
+  const blacklist = [
+    '리딩방', '무료 리딩', '매수 추천', '매도 추천',
+    '특급 매매', '급등 임박', '지금 사야',
+    '추천 종목', '오늘의 종목', 'TOP 5',
+    '100% 수익', '대박 종목', '필수 매수',
+    '비밀 정보', '특급 정보',
+    '★', '☆', '◆', '◇', '■', '□'
+  ];
+
+  for (const word of blacklist) {
+    if (headline.includes(word)) return true;
+
+  }
+
+  const words = headline.split(/\s+/);
+  const wordCount = {};
+  for (const word of words) {
+    if (word.length < 2) continue;
+    wordCount[word] = (wordCount[word] || 0) + 1;
+    if (wordCount[word] >= 3) return true;
+  
+  }
+
+  if (/^[\d\s%원달러]+$/.test(headline)) return true;
+
+  return false;
+}
+
+
     async function fetchFromRSS(rssUrl, category, defaultIcon) {
   const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
@@ -351,15 +383,18 @@
       return [];
     }
 
-    return data.items.slice(0, 10).map(item => ({
-      time: formatRSSTime(item.pubDate),
-      category: category,
-      icon: defaultIcon,
-      headline: item.title,
-      ticker: null,
-      tickerType: null,
-      link: item.link
-    }));
+    return data.items
+  .filter(item => !isJunkNews(item.title))
+  .slice(0, 10)
+  .map(item => ({
+    time: formatRSSTime(item.pubDate),
+    category: category,
+    icon: defaultIcon,
+    headline: item.title,
+    ticker: null,
+    tickerType: null,
+    link: item.link
+  }));
   } catch (error) {
     console.error('RSS 에러:', error);
     return [];
@@ -373,6 +408,23 @@ function formatRSSTime(pubDate) {
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
   return `${month}/${day} ${hours}:${minutes}`;
+}
+
+function getTimestamp(timeStr) {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+
+  const [datePart, timePart] = timeStr.split(' ');
+  const [month, day] = datePart.split('/').map(Number);
+  const [hour, minute] = (timePart || '00:00').split(':').map(Number);
+
+  let year = currentYear;
+  if (month > currentMonth) {
+    year = currentYear - 1;
+  }
+
+  return new Date(year, month - 1, day, hour, minute).getTime();
 }
 
 const RSS_SOURCES = [
@@ -418,7 +470,7 @@ async function loadNews() {
 
     newsData = [...uniqueRssNews, ...localNews];
 
-    newsData.sort((a, b) => b.time.localeCompare(a.time));
+    newsData.sort((a, b) => getTimestamp(b.time) - getTimestamp(a.time));
 
     updateStats();
     renderNews();
