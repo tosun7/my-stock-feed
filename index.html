@@ -14,33 +14,6 @@
       min-height: 100vh;
       padding: 16px;
     }
-/* 네비게이션 링크 */
-.nav-links {
-  display: flex;
-  gap: 6px;
-  margin-right: 12px;
-}
-
-.nav-link {
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  color: #b0b0b0;
-  text-decoration: none;
-  background: #2a2d34;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.nav-link:hover {
-  background: #3a3d44;
-  color: #e0e0e0;
-}
-
-.nav-link.active {
-  background: #2a4d8a;
-  color: #fff;
-}
 
     .layout { max-width: 1400px; margin: 0 auto; }
 
@@ -59,6 +32,20 @@
     .channel-info { flex: 1; }
     .channel-name { font-size: 15px; font-weight: 600; color: #6da3e8; }
     .channel-desc { font-size: 12px; color: #8a8a8a; margin-top: 2px; }
+
+    /* 네비게이션 */
+    .nav-links {
+      display: flex; gap: 6px; margin-right: 12px;
+    }
+    .nav-link {
+      padding: 6px 12px; border-radius: 8px;
+      font-size: 12px; color: #b0b0b0;
+      text-decoration: none; background: #2a2d34;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .nav-link:hover { background: #3a3d44; color: #e0e0e0; }
+    .nav-link.active { background: #2a4d8a; color: #fff; }
+
     .live-indicator {
       font-size: 11px; color: #6dd49e;
       display: flex; align-items: center; gap: 4px;
@@ -72,7 +59,6 @@
       50% { opacity: 0.4; }
     }
 
-    /* 메인 그리드 */
     .main-grid {
       display: grid;
       grid-template-columns: 2fr 1fr;
@@ -150,7 +136,6 @@
     .ticker.hot { background: #5c2a2a; color: #e88a8a; }
     .ticker.green { background: #1f4d3a; color: #6dd49e; }
 
-    /* 사이드바 */
     .sidebar { display: flex; flex-direction: column; gap: 12px; }
     .sidebar-box {
       background: #1a1d24; border-radius: 12px;
@@ -170,14 +155,13 @@
     }
     .add-btn:hover { background: #3a5d9a; }
 
-    /* 종목 그룹 헤더 */
     .group-header {
       font-size: 11px; color: #8a8a8a;
       margin: 8px 0 4px; padding: 0 4px;
     }
     .group-header.first { margin-top: 0; }
 
-    /* 미국 주식 - 가격 표시 */
+    /* 미국 주식 */
     .us-stock {
       padding: 8px 4px;
       border-bottom: 1px solid #2a2d34;
@@ -216,25 +200,31 @@
       font-style: italic;
     }
 
-    /* 한국 주식 - 네이버 링크 */
+    /* 한국 주식 - 전체 클릭 가능 */
     .kr-stock {
       padding: 8px 4px;
       border-bottom: 1px solid #2a2d34;
       display: flex; align-items: center;
       justify-content: space-between;
       gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      color: inherit;
+      border-radius: 4px;
+    }
+    .kr-stock:hover {
+      background: #22252c;
+      padding: 8px 8px;
+      margin: 0 -4px;
     }
     .kr-stock:last-child { border-bottom: none; }
 
-    .naver-link {
-      background: #1d4d2d; color: #6dd49e;
-      border: none; padding: 4px 8px;
-      border-radius: 6px; font-size: 10px;
-      cursor: pointer; font-weight: 500;
-      text-decoration: none;
-      display: inline-block;
+    .kr-arrow {
+      font-size: 11px;
+      color: #6da3e8;
+      flex-shrink: 0;
     }
-    .naver-link:hover { background: #2d5d3d; }
 
     .delete-btn {
       background: transparent; color: #6a6a6a;
@@ -301,20 +291,20 @@
   <div class="layout">
 
     <div class="channel-header">
-  <div class="channel-avatar">VB</div>
-  <div class="channel-info">
-    <div class="channel-name">MY STOCK FEED</div>
-    <div class="channel-desc">AI 인프라 + 메모리 + 매크로</div>
-  </div>
-  <div class="nav-links">
-    <a href="index.html" class="nav-link active">📰 뉴스</a>
-    <a href="portfolios.html" class="nav-link">🏢 포트폴리오</a>
-  </div>
-  <div class="live-indicator">
-    <span class="live-dot"></span>
-    라이브
-  </div>
-</div>
+      <div class="channel-avatar">VB</div>
+      <div class="channel-info">
+        <div class="channel-name">MY STOCK FEED</div>
+        <div class="channel-desc">AI 인프라 + 메모리 + 매크로</div>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link active">📰 뉴스</a>
+        <a href="portfolios.html" class="nav-link">🏢 포트폴리오</a>
+      </div>
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        라이브
+      </div>
+    </div>
 
     <div class="main-grid">
 
@@ -428,7 +418,6 @@
   </div>
 
   <script>
-    /* 관심 종목 관리 */
     const DEFAULT_WATCHLIST = [
       { symbol: 'KRX:000660', name: 'SK하이닉스' },
       { symbol: 'KRX:005930', name: '삼성전자' },
@@ -462,18 +451,15 @@
 
     let watchlist = loadWatchlist();
 
-    /* 한국/미국 구분 */
     function isKoreanStock(symbol) {
       return symbol.startsWith('KRX:') || symbol.startsWith('KOSDAQ:');
     }
 
-    /* 네이버 금융 URL */
     function getNaverUrl(symbol) {
       const code = symbol.split(':')[1];
       return `https://finance.naver.com/item/main.nhn?code=${code}`;
     }
 
-    /* Yahoo Finance API로 미국 주식 가격 가져오기 */
     async function fetchUSPrice(symbol) {
       const ticker = symbol.split(':')[1];
       const apiUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`;
@@ -504,7 +490,6 @@
       }
     }
 
-    /* 관심 종목 리스트 렌더링 */
     function renderWatchlist() {
       const container = document.getElementById('watchlist');
 
@@ -538,28 +523,29 @@
       }
 
       if (krStocks.length > 0) {
-        html += '<div class="group-header">한국 주식 (네이버 금융)</div>';
+        html += '<div class="group-header">한국 주식 (클릭 → 네이버)</div>';
         html += krStocks.map(item => {
           const idx = watchlist.indexOf(item);
           const code = item.symbol.split(':')[1];
           return `
-            <div class="kr-stock">
+            <a href="${getNaverUrl(item.symbol)}" target="_blank" class="kr-stock">
               <div class="stock-info">
                 <span class="stock-symbol">${code}</span>
                 <span class="stock-name">${item.name}</span>
               </div>
-              <a href="${getNaverUrl(item.symbol)}" target="_blank" class="naver-link">📊 네이버</a>
-              <button class="delete-btn" data-idx="${idx}">🗑️</button>
-            </div>
+              <span class="kr-arrow">↗</span>
+              <button class="delete-btn" data-idx="${idx}" onclick="event.preventDefault(); event.stopPropagation();">🗑️</button>
+            </a>
           `;
         }).join('');
       }
 
       container.innerHTML = html;
 
-      // 삭제 버튼
       container.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
           const idx = parseInt(btn.dataset.idx);
           watchlist.splice(idx, 1);
           saveWatchlist(watchlist);
@@ -569,7 +555,10 @@
       });
     }
 
-    /* 모든 미국 주식 가격 로드 */
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     async function loadAllUSPrices() {
       const usStocks = watchlist.filter(item => !isKoreanStock(item.symbol));
 
@@ -578,9 +567,16 @@
         const priceEl = document.getElementById(`price-${idx}`);
         if (!priceEl) continue;
 
-        const data = await fetchUSPrice(item.symbol);
+        let data = await fetchUSPrice(item.symbol);
+
+        if (!data) {
+          await sleep(500);
+          data = await fetchUSPrice(item.symbol);
+        }
+
         if (!data) {
           priceEl.innerHTML = '<div class="price-loading">데이터 없음</div>';
+          await sleep(200);
           continue;
         }
 
@@ -593,6 +589,8 @@
           <div class="stock-price ${colorClass}">$${data.price}</div>
           <div class="stock-change ${colorClass}">${sign}${data.changePercent}%</div>
         `;
+
+        await sleep(200);
       }
     }
 
@@ -651,12 +649,10 @@
       });
     }
 
-    /* 5분마다 가격 자동 갱신 */
     setInterval(() => {
       loadAllUSPrices();
     }, 5 * 60 * 1000);
 
-    /* 뉴스 피드 */
     let newsData = [];
 
     function isJunkNews(headline) {
@@ -943,7 +939,6 @@
       }
     }
 
-    /* 페이지 시작 */
     renderWatchlist();
     setupAddForm();
     loadAllUSPrices();

@@ -17,7 +17,6 @@
 
     .layout { max-width: 1200px; margin: 0 auto; }
 
-    /* 상단 헤더 (네비게이션) */
     .nav-header {
       display: flex;
       align-items: center;
@@ -53,7 +52,6 @@
     .nav-link:hover { background: #3a3d44; color: #e0e0e0; }
     .nav-link.active { background: #2a4d8a; color: #fff; }
 
-    /* 회사 선택 탭 */
     .company-tabs {
       display: flex;
       gap: 8px;
@@ -82,7 +80,6 @@
       color: #fff;
     }
 
-    /* 회사 요약 카드 */
     .company-summary {
       background: #1a1d24;
       border-radius: 12px;
@@ -137,7 +134,17 @@
       font-style: italic;
     }
 
-    /* 섹터 그리드 */
+    /* 메인 그리드 - 섹터(왼) + 블로그 RSS(오) */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 1000px) {
+      .content-grid { grid-template-columns: 1fr; }
+    }
+
     .sectors-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -148,7 +155,6 @@
       .sectors-grid { grid-template-columns: 1fr; }
     }
 
-    /* 섹터 카드 */
     .sector-card {
       background: #1a1d24;
       border-radius: 12px;
@@ -239,7 +245,73 @@
       margin-bottom: 4px;
     }
 
-    /* 푸터 */
+    /* 블로그 RSS 사이드바 */
+    .blog-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .blog-box {
+      background: #1a1d24;
+      border-radius: 12px;
+      border: 1px solid #2a2d34;
+      padding: 14px 16px;
+    }
+
+    .blog-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f0f0f0;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .blog-subtitle {
+      font-size: 11px;
+      color: #8a8a8a;
+      margin-bottom: 12px;
+    }
+
+    .blog-item {
+      display: block;
+      padding: 10px 0;
+      border-bottom: 1px solid #2a2d34;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s;
+    }
+
+    .blog-item:hover {
+      background: #22252c;
+      margin: 0 -16px;
+      padding: 10px 16px;
+    }
+
+    .blog-item:last-child { border-bottom: none; }
+
+    .blog-date {
+      font-size: 10px;
+      color: #6da3e8;
+      margin-bottom: 4px;
+    }
+
+    .blog-headline {
+      font-size: 12px;
+      color: #e0e0e0;
+      line-height: 1.4;
+    }
+
+    .blog-loading {
+      font-size: 11px;
+      color: #6a6a6a;
+      text-align: center;
+      padding: 20px 8px;
+      font-style: italic;
+    }
+
     .footer {
       background: #1a1d24;
       padding: 14px 16px;
@@ -251,7 +323,6 @@
       color: #6a6a6a;
     }
 
-    /* 빈 상태 */
     .empty-state {
       text-align: center;
       padding: 60px 20px;
@@ -268,7 +339,6 @@
 <body>
   <div class="layout">
 
-    <!-- 네비게이션 헤더 -->
     <div class="nav-header">
       <div class="nav-avatar">VB</div>
       <div class="nav-title">MY STOCK FEED</div>
@@ -278,25 +348,40 @@
       </div>
     </div>
 
-    <!-- 회사 선택 탭 -->
     <div class="company-tabs" id="company-tabs">
-      <!-- 자동 생성됨 -->
     </div>
 
-    <!-- 회사 정보 -->
     <div id="company-content">
       <div class="empty-state">
         데이터 로딩 중...
       </div>
     </div>
 
-    <!-- 푸터 -->
     <div class="footer">
       마지막 업데이트: <span id="last-update">-</span>
     </div>
   </div>
 
   <script>
+    /* 회사별 블로그 RSS 매핑 */
+    const COMPANY_RSS = {
+      'nvidia': [
+        {
+          name: 'NVIDIA Blog',
+          url: 'https://blogs.nvidia.com/feed/',
+          icon: '📝'
+        },
+        {
+          name: 'NVIDIA News',
+          url: 'https://nvidianews.nvidia.com/releases.xml',
+          icon: '📢'
+        }
+      ]
+      // 나중에 다른 회사 추가 가능:
+      // 'microsoft': [...],
+      // 'google': [...]
+    };
+
     let portfolioData = null;
     let currentCompanyId = null;
 
@@ -340,7 +425,6 @@
     function showCompany(companyId) {
       currentCompanyId = companyId;
 
-      // 탭 활성화
       document.querySelectorAll('.company-tab').forEach(tab => {
         tab.classList.toggle('active', tab.dataset.id === companyId);
       });
@@ -350,7 +434,6 @@
 
       const content = document.getElementById('company-content');
 
-      // 회사 요약
       const summaryHtml = `
         <div class="company-summary">
           <h1>
@@ -366,14 +449,22 @@
         </div>
       `;
 
-      // 섹터 카드들
-      const sectorsHtml = `
-        <div class="sectors-grid">
-          ${company.sectors.map(sector => renderSectorCard(sector)).join('')}
+      // 메인 콘텐츠: 섹터 카드 + 블로그 사이드바
+      const mainContent = `
+        <div class="content-grid">
+          <div class="sectors-grid">
+            ${company.sectors.map(sector => renderSectorCard(sector)).join('')}
+          </div>
+          <div class="blog-sidebar" id="blog-sidebar">
+            ${renderBlogPlaceholder(companyId)}
+          </div>
         </div>
       `;
 
-      content.innerHTML = summaryHtml + sectorsHtml;
+      content.innerHTML = summaryHtml + mainContent;
+
+      // 해당 회사의 블로그 RSS 로드
+      loadCompanyBlogs(companyId);
     }
 
     function renderSectorCard(sector) {
@@ -406,7 +497,70 @@
       `;
     }
 
-    /* 페이지 시작 */
+    function renderBlogPlaceholder(companyId) {
+      const sources = COMPANY_RSS[companyId];
+      if (!sources || sources.length === 0) {
+        return `
+          <div class="blog-box">
+            <div class="blog-title">📡 공식 소식</div>
+            <div class="blog-loading">
+              ${portfolioData.companies.find(c => c.id === companyId)?.name || ''} 블로그 RSS 미등록
+            </div>
+          </div>
+        `;
+      }
+
+      return sources.map(source => `
+        <div class="blog-box">
+          <div class="blog-title">${source.icon} ${source.name}</div>
+          <div class="blog-subtitle">최신 공식 소식</div>
+          <div id="blog-${source.url.replace(/[^a-z0-9]/gi, '_')}" class="blog-list">
+            <div class="blog-loading">로딩 중...</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function loadCompanyBlogs(companyId) {
+      const sources = COMPANY_RSS[companyId];
+      if (!sources) return;
+
+      for (const source of sources) {
+        const containerId = 'blog-' + source.url.replace(/[^a-z0-9]/gi, '_');
+        const container = document.getElementById(containerId);
+        if (!container) continue;
+
+        try {
+          const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`;
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+
+          if (data.status !== 'ok' || !data.items || data.items.length === 0) {
+            container.innerHTML = '<div class="blog-loading">소식을 불러올 수 없습니다</div>';
+            continue;
+          }
+
+          const items = data.items.slice(0, 8);
+          container.innerHTML = items.map(item => {
+            const date = new Date(item.pubDate);
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const dateStr = `${date.getFullYear()}.${month}.${day}`;
+
+            return `
+              <a href="${item.link}" target="_blank" class="blog-item">
+                <div class="blog-date">${dateStr}</div>
+                <div class="blog-headline">${item.title}</div>
+              </a>
+            `;
+          }).join('');
+        } catch (error) {
+          console.error('블로그 로드 실패:', source.name, error);
+          container.innerHTML = '<div class="blog-loading">로드 실패</div>';
+        }
+      }
+    }
+
     loadPortfolios();
   </script>
 </body>
