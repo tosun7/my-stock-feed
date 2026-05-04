@@ -1,0 +1,147 @@
+{
+  "lastUpdated": "2026-05-04",
+  "companies": [
+    {
+      "id": "nvidia",
+      "name": "NVIDIA",
+      "ticker": "NVDA",
+      "description": "AI 시대를 만든 NVIDIA의 자체 포트폴리오. GPU 가속기 상용화를 위해 필요한 모든 영역에 베팅하는 회사.",
+      "totalInvestment": "약 $145B+",
+      "thesisNote": "엔비디아의 포트폴리오 = 진짜 병목이 어디인지 보여주는 지표. 그들이 가장 잘 알고 있고, AI 사이클 장기화를 가장 절실히 원하는 회사. AI가 끝나면 GPU 못 팔아먹기 때문에 누구보다 간절히 문제를 해결하려 함.",
+      "sectors": [
+        {
+          "id": "ai-foundation",
+          "name": "AI 모델 파운데이션",
+          "icon": "🧠",
+          "color": "blue",
+          "totalAmount": "$121B+",
+          "thesis": "NVIDIA의 최대 투자 영역. OpenAI·xAI·Anthropic 등 AI 모델 기업에 대한 대규모 자본 투입으로 GPU 수요를 구조적으로 창출하는 Circular Revenue 전략의 핵심.",
+          "companies": [
+            { "name": "OpenAI", "amount": "$100B commitment (10× $10B tranches)" },
+            { "name": "Anthropic", "amount": "$5B commitment" },
+            { "name": "xAI", "amount": "$6B (2024) + $2B (2025.10)" },
+            { "name": "Mistral AI", "amount": "€1.7B Series C" },
+            { "name": "Cohere", "amount": "Undisclosed" },
+            { "name": "Reflection AI", "amount": "$2B round" },
+            { "name": "Thinking Machines Lab", "amount": "$2B seed" },
+            { "name": "SSI (Safe Superintelligence Inc.)", "amount": "Confirmed" },
+            { "name": "Perplexity", "amount": "Confirmed" },
+            { "name": "Sakana AI", "amount": "Confirmed" },
+            { "name": "Cursor", "amount": "$2.3B Series D" }
+          ]
+        },
+        {
+          "id": "neocloud",
+          "name": "네오클라우드",
+          "icon": "☁️",
+          "color": "purple",
+          "totalAmount": "$9.2B+",
+          "thesis": "AWS/Azure/GCP와 차별화된 GPU-native 클라우드 인프라. NVIDIA가 직접 잔여 GPU 용량을 밀어 넣는 위탁 클라우드 모델.",
+          "companies": [
+            { "name": "CoreWeave", "amount": "$100M (2023) + $6.3B capacity (2025.09) + ~$2B additional" },
+            { "name": "Nebius", "amount": "$700M (Q2 2025) + $2B (2026.03)" },
+            { "name": "Lambda Labs", "amount": "Confirmed" },
+            { "name": "Firmus Technologies", "amount": "$215M round" }
+          ]
+        },
+        {
+          "id": "quantum",
+          "name": "양자 컴퓨팅",
+          "icon": "⚛️",
+          "color": "purple",
+          "totalAmount": "$1.8B+",
+          "thesis": "이온트랩·광자·중성원자 3가지 양자 기술에 동시 투자하는 모달리티 헷징 전략. CUDA-Q 플랫폼으로 양자 시대에도 소프트웨어 독점 유지.",
+          "companies": [
+            { "name": "Quantinuum", "amount": "$600M round" },
+            { "name": "PsiQuantum", "amount": "$1B Series E" },
+            { "name": "QuEra Computing", "amount": "$230M convertible" }
+          ]
+        },
+        {
+          "id": "optical-cpo",
+          "name": "광통신 / CPO / SiPho",
+          "icon": "💡",
+          "color": "amber",
+          "totalAmount": "$4.7B+",
+          "thesis": "GPU 스케일링의 물리적 병목인 전기 신호 한계를 돌파하기 위한 광통신 집중 투자. Co-Packaged Optics(CPO) 기술로 차세대 Rubin 아키텍처 대비.",
+          "companies": [
+            { "name": "Coherent", "amount": "$2B" },
+            { "name": "Lumentum", "amount": "$2B" },
+            { "name": "Ayar Labs", "amount": "2022 first + $155M Series D (2024.12) + $500M Series E (2026.03)" }
+          ]
+        },
+        {
+          "id": "robotics",
+          "name": "로보틱스 / 피지컬 AI",
+          "icon": "🤖",
+          "color": "pink",
+          "totalAmount": "$3.5B+",
+          "thesis": "휴머노이드와 자율주행을 차세대 GPU 수요원으로. NVIDIA Isaac, Cosmos 플랫폼과 연계.",
+          "companies": [
+            { "name": "Figure AI", "amount": "$675M Series B (2024.02) + $1B+ Series C (2025.09)" },
+            { "name": "Wayve", "amount": "$1.05B Series C (2024.05) + $1.2B Series D (2026.02)" },
+            { "name": "Skild AI", "amount": "Confirmed" }
+          ]
+        },
+        {
+          "id": "energy-nuclear",
+          "name": "에너지 / 원자력 / 핵융합",
+          "icon": "⚡",
+          "color": "green",
+          "totalAmount": "$1.5B+",
+          "thesis": "AI 데이터센터 전력 수요 폭증 대응. 원자력·핵융합 등 베이스로드 발전에 직접 베팅.",
+          "companies": [
+            { "name": "Commonwealth Fusion Systems (CFS)", "amount": "$863M Series B2" },
+            { "name": "TerraPower", "amount": "$650M Series C" },
+            { "name": "Redwood Materials", "amount": "Confirmed" }
+          ]
+        },
+        {
+          "id": "sector-7",
+          "name": "섹터 이름 입력",
+          "icon": "📌",
+          "color": "teal",
+          "totalAmount": "TBD",
+          "thesis": "투자 논리를 여기에 입력하세요.",
+          "companies": [
+            { "name": "회사명 1", "amount": "투자 정보" },
+            { "name": "회사명 2", "amount": "투자 정보" }
+          ]
+        },
+        {
+          "id": "sector-8",
+          "name": "섹터 이름 입력",
+          "icon": "📌",
+          "color": "blue",
+          "totalAmount": "TBD",
+          "thesis": "투자 논리를 여기에 입력하세요.",
+          "companies": [
+            { "name": "회사명 1", "amount": "투자 정보" }
+          ]
+        },
+        {
+          "id": "sector-9",
+          "name": "섹터 이름 입력",
+          "icon": "📌",
+          "color": "purple",
+          "totalAmount": "TBD",
+          "thesis": "투자 논리를 여기에 입력하세요.",
+          "companies": [
+            { "name": "회사명 1", "amount": "투자 정보" }
+          ]
+        },
+        {
+          "id": "sector-10",
+          "name": "섹터 이름 입력",
+          "icon": "📌",
+          "color": "red",
+          "totalAmount": "TBD",
+          "thesis": "투자 논리를 여기에 입력하세요.",
+          "companies": [
+            { "name": "회사명 1", "amount": "투자 정보" }
+          ]
+        }
+      ]
+    }
+  ]
+}

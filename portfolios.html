@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>빅테크 포트폴리오 - My Stock Feed</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0f1115;
+      color: #e8e8e8;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .layout { max-width: 1200px; margin: 0 auto; }
+
+    /* 상단 헤더 (네비게이션) */
+    .nav-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: #1a1d24;
+      border-radius: 12px;
+      border: 1px solid #2a2d34;
+      margin-bottom: 12px;
+    }
+    .nav-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: #2a4d8a; display: flex;
+      align-items: center; justify-content: center;
+      font-weight: 600; font-size: 14px; color: #fff;
+    }
+    .nav-title {
+      font-size: 15px; font-weight: 600; color: #6da3e8;
+      flex: 1;
+    }
+    .nav-links {
+      display: flex; gap: 8px;
+    }
+    .nav-link {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #b0b0b0;
+      text-decoration: none;
+      background: #2a2d34;
+      transition: all 0.2s;
+    }
+    .nav-link:hover { background: #3a3d44; color: #e0e0e0; }
+    .nav-link.active { background: #2a4d8a; color: #fff; }
+
+    /* 회사 선택 탭 */
+    .company-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #1a1d24;
+      border-radius: 12px;
+      border: 1px solid #2a2d34;
+      margin-bottom: 12px;
+      overflow-x: auto;
+    }
+    .company-tab {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #b0b0b0;
+      background: #2a2d34;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .company-tab:hover { background: #3a3d44; color: #e0e0e0; }
+    .company-tab.active {
+      background: #2a4d8a;
+      color: #fff;
+    }
+
+    /* 회사 요약 카드 */
+    .company-summary {
+      background: #1a1d24;
+      border-radius: 12px;
+      border: 1px solid #2a2d34;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .company-summary h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #e0e0e0;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .company-ticker {
+      font-size: 13px;
+      padding: 4px 10px;
+      background: #2a3d5c;
+      color: #6da3e8;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .company-meta {
+      display: flex;
+      gap: 24px;
+      margin: 12px 0;
+      font-size: 13px;
+      color: #8a8a8a;
+    }
+    .company-meta strong {
+      color: #e0e0e0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .company-description {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #b0b0b0;
+      margin-top: 8px;
+    }
+    .thesis-note {
+      margin-top: 16px;
+      padding: 12px 14px;
+      background: #22252c;
+      border-left: 3px solid #6dd49e;
+      border-radius: 6px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #c0c0c0;
+      font-style: italic;
+    }
+
+    /* 섹터 그리드 */
+    .sectors-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 800px) {
+      .sectors-grid { grid-template-columns: 1fr; }
+    }
+
+    /* 섹터 카드 */
+    .sector-card {
+      background: #1a1d24;
+      border-radius: 12px;
+      border: 1px solid #2a2d34;
+      padding: 18px 20px;
+      border-top: 3px solid #6da3e8;
+    }
+
+    .sector-card.color-blue { border-top-color: #6da3e8; }
+    .sector-card.color-purple { border-top-color: #b794f4; }
+    .sector-card.color-amber { border-top-color: #ed8936; }
+    .sector-card.color-pink { border-top-color: #ed64a6; }
+    .sector-card.color-green { border-top-color: #6dd49e; }
+    .sector-card.color-teal { border-top-color: #4fd1c5; }
+    .sector-card.color-red { border-top-color: #fc8181; }
+
+    .sector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .sector-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sector-amount {
+      font-size: 16px;
+      font-weight: 600;
+      color: #6dd49e;
+    }
+    .sector-card.color-purple .sector-amount { color: #b794f4; }
+    .sector-card.color-amber .sector-amount { color: #ed8936; }
+    .sector-card.color-pink .sector-amount { color: #ed64a6; }
+    .sector-card.color-blue .sector-amount { color: #6da3e8; }
+    .sector-card.color-teal .sector-amount { color: #4fd1c5; }
+
+    .companies-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .company-chip {
+      font-size: 11px;
+      padding: 5px 10px;
+      background: #22252c;
+      color: #c0c0c0;
+      border-radius: 12px;
+      border: 1px solid #2a2d34;
+    }
+
+    .sector-card.color-blue .company-chip {
+      background: #1a2d40; color: #b5d4f4; border-color: #2a3d5c;
+    }
+    .sector-card.color-purple .company-chip {
+      background: #2a1d40; color: #cebbf6; border-color: #3a2d5c;
+    }
+    .sector-card.color-amber .company-chip {
+      background: #3d2a14; color: #fac775; border-color: #5c3d20;
+    }
+    .sector-card.color-pink .company-chip {
+      background: #3d1a2a; color: #f4c0d1; border-color: #5c2a3d;
+    }
+    .sector-card.color-green .company-chip {
+      background: #1a3d2a; color: #c0dd97; border-color: #2a5c3d;
+    }
+    .sector-card.color-teal .company-chip {
+      background: #1a3d3a; color: #9fe1cb; border-color: #2a5c54;
+    }
+
+    .sector-thesis {
+      padding: 12px 14px;
+      background: #22252c;
+      border-radius: 8px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #b0b0b0;
+    }
+    .sector-thesis-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #8a8a8a;
+      margin-bottom: 4px;
+    }
+
+    /* 푸터 */
+    .footer {
+      background: #1a1d24;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #2a2d34;
+      margin-top: 16px;
+      text-align: center;
+      font-size: 12px;
+      color: #6a6a6a;
+    }
+
+    /* 빈 상태 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6a6a6a;
+      font-size: 14px;
+    }
+
+    .placeholder-data {
+      opacity: 0.5;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+
+    <!-- 네비게이션 헤더 -->
+    <div class="nav-header">
+      <div class="nav-avatar">VB</div>
+      <div class="nav-title">MY STOCK FEED</div>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">📰 뉴스</a>
+        <a href="portfolios.html" class="nav-link active">🏢 포트폴리오</a>
+      </div>
+    </div>
+
+    <!-- 회사 선택 탭 -->
+    <div class="company-tabs" id="company-tabs">
+      <!-- 자동 생성됨 -->
+    </div>
+
+    <!-- 회사 정보 -->
+    <div id="company-content">
+      <div class="empty-state">
+        데이터 로딩 중...
+      </div>
+    </div>
+
+    <!-- 푸터 -->
+    <div class="footer">
+      마지막 업데이트: <span id="last-update">-</span>
+    </div>
+  </div>
+
+  <script>
+    let portfolioData = null;
+    let currentCompanyId = null;
+
+    async function loadPortfolios() {
+      try {
+        const response = await fetch('portfolios.json');
+        portfolioData = await response.json();
+
+        document.getElementById('last-update').textContent = portfolioData.lastUpdated;
+
+        renderCompanyTabs();
+
+        if (portfolioData.companies.length > 0) {
+          showCompany(portfolioData.companies[0].id);
+        }
+      } catch (error) {
+        console.error('포트폴리오 로드 실패:', error);
+        document.getElementById('company-content').innerHTML = `
+          <div class="empty-state">
+            데이터를 불러올 수 없습니다. portfolios.json 파일을 확인해주세요.
+          </div>
+        `;
+      }
+    }
+
+    function renderCompanyTabs() {
+      const container = document.getElementById('company-tabs');
+      container.innerHTML = portfolioData.companies.map(company => `
+        <button class="company-tab" data-id="${company.id}">
+          ${company.name}
+        </button>
+      `).join('');
+
+      container.querySelectorAll('.company-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          showCompany(tab.dataset.id);
+        });
+      });
+    }
+
+    function showCompany(companyId) {
+      currentCompanyId = companyId;
+
+      // 탭 활성화
+      document.querySelectorAll('.company-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.id === companyId);
+      });
+
+      const company = portfolioData.companies.find(c => c.id === companyId);
+      if (!company) return;
+
+      const content = document.getElementById('company-content');
+
+      // 회사 요약
+      const summaryHtml = `
+        <div class="company-summary">
+          <h1>
+            ${company.name}
+            <span class="company-ticker">${company.ticker}</span>
+          </h1>
+          <div class="company-meta">
+            <div>총 투자: <strong>${company.totalInvestment}</strong></div>
+            <div>섹터: <strong>${company.sectors.length}개</strong></div>
+          </div>
+          <div class="company-description">${company.description}</div>
+          ${company.thesisNote ? `<div class="thesis-note">${company.thesisNote}</div>` : ''}
+        </div>
+      `;
+
+      // 섹터 카드들
+      const sectorsHtml = `
+        <div class="sectors-grid">
+          ${company.sectors.map(sector => renderSectorCard(sector)).join('')}
+        </div>
+      `;
+
+      content.innerHTML = summaryHtml + sectorsHtml;
+    }
+
+    function renderSectorCard(sector) {
+      const color = sector.color || 'blue';
+      const isPlaceholder = sector.totalAmount === 'TBD';
+
+      const companiesHtml = sector.companies.map(c => {
+        const isPlaceholderCompany = c.amount.includes('데이터 입력 필요');
+        const className = isPlaceholderCompany ? 'company-chip placeholder-data' : 'company-chip';
+        return `<span class="${className}">${c.name}${c.amount && !isPlaceholderCompany ? ' ' + c.amount : ''}</span>`;
+      }).join('');
+
+      return `
+        <div class="sector-card color-${color} ${isPlaceholder ? 'placeholder-data' : ''}">
+          <div class="sector-header">
+            <div class="sector-title">
+              <span>${sector.icon}</span>
+              <span>${sector.name}</span>
+            </div>
+            <div class="sector-amount">${sector.totalAmount}</div>
+          </div>
+          <div class="companies-list">
+            ${companiesHtml}
+          </div>
+          <div class="sector-thesis">
+            <div class="sector-thesis-label">투자 논리</div>
+            ${sector.thesis}
+          </div>
+        </div>
+      `;
+    }
+
+    /* 페이지 시작 */
+    loadPortfolios();
+  </script>
+</body>
+</html>
