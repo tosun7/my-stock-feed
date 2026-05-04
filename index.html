@@ -370,6 +370,112 @@ function isJunkNews(headline) {
   return false;
 }
 
+const CATEGORY_KEYWORDS = {
+  optic: [
+    'CoWoS', 'TSMC',
+    '광학', '광 인터커넥트', '인터커넥트',
+    '광 트랜시버', '트랜시버',
+    '광섬유', '광 케이블',
+    'CPO', 'co-packaged',
+    '첨단 패키징', '패키징',
+    'FC-BGA', 'FCBGA',
+    'EMIB', 'Camtek',
+    'Coherent', 'Lumentum'
+  ],
+
+  memory: [
+    'HBM', 'HBM3', 'HBM4', 'HBM3E',
+    '메모리', 'DRAM', 'NAND', '낸드',
+    '디램', '낸드플래시',
+    'SK하이닉스', '하이닉스',
+    '마이크론', 'Micron',
+    '삼성전자 메모리'
+  ],
+
+  power: [
+    '변압기', '765kV', '800kV', 'GIS', 'GCB',
+    'SMR', '원전', '원자력',
+    '데이터센터 전력', '전력 인프라',
+    '그리드', 'PJM',
+    'LS일렉', 'LS ELECTRIC', 'LS일렉트릭',
+    'HD현대일렉', '현대일렉',
+    '효성중공업',
+    '두산에너빌리티', '두산',
+    'GE Vernova', 'Vernova',
+    'Eaton', 'Quanta',
+    '백악관', 'Ratepayer',
+    '전력반도체', 'SiC', 'GaN'
+  ],
+
+  earning: [
+    '실적', '실적 발표', '실적발표',
+    '1Q', '2Q', '3Q', '4Q',
+    '분기 실적', '컨센서스',
+    'EPS', '영업이익', '매출',
+    '가이던스', '전망치 상향',
+    'beat', 'miss',
+    '서프라이즈', '쇼크'
+  ],
+
+  bigtech: [
+    'capex', 'CapEx',
+    '엔비디아', 'NVIDIA', 'NVDA',
+    '마이크로소프트', 'Microsoft', 'MSFT',
+    '알파벳', 'Alphabet', 'GOOGL', '구글', 'Google',
+    '메타', 'Meta', 'META',
+    '아마존', 'Amazon', 'AMZN',
+    '오픈AI', 'OpenAI',
+    'Anthropic',
+    '하이퍼스케일', 'hyperscaler',
+    'AI 수익', 'AI 매출', 'AI 의구심',
+    '코파일럿', 'Copilot',
+    'AI 투자', 'capex 우려'
+  ],
+
+  macro: [
+    '연준', 'Fed', 'FOMC',
+    '금리', '기준금리', '금리인상', '금리인하',
+    '유가', '원유', 'WTI', '브렌트',
+    'OPEC',
+    '인플레이션', 'CPI', 'PPI',
+    '환율', '달러',
+    '백악관', 'Ratepayer Protection',
+    'Burry', '버블', 'bubble',
+    'Howard Marks',
+    'GDP', '경기'
+  ]
+};
+
+function detectCategory(headline, defaultCategory) {
+  const scores = {};
+
+  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+    scores[category] = 0;
+    for (const keyword of keywords) {
+      if (headline.includes(keyword)) {
+        scores[category]++;
+      }
+    }
+  }
+
+  let bestCategory = defaultCategory;
+  let bestScore = 0;
+
+  for (const [category, score] of Object.entries(scores)) {
+    if (score > bestScore) {
+      bestScore = score;
+      bestCategory = category;
+    }
+  }
+
+const finalCategory = bestScore > 0 ? bestCategory : defaultCategory;
+
+  if (bestScore > 0 && finalCategory !== defaultCategory) {
+    console.log(`🏷️ ${defaultCategory} → ${finalCategory}: ${headline.substring(0, 50)}`);
+  }
+
+  return finalCategory;
+}
 
     async function fetchFromRSS(rssUrl, category, defaultIcon) {
   const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
@@ -383,12 +489,12 @@ function isJunkNews(headline) {
       return [];
     }
 
-    return data.items
+  return data.items
   .filter(item => !isJunkNews(item.title))
   .slice(0, 10)
   .map(item => ({
     time: formatRSSTime(item.pubDate),
-    category: category,
+    category: detectCategory(item.title, category),
     icon: defaultIcon,
     headline: item.title,
     ticker: null,
