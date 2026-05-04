@@ -5,238 +5,274 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Stock Feed</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background: #0f1115;
       color: #e8e8e8;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", sans-serif;
       min-height: 100vh;
-      padding: 20px 12px;
+      padding: 16px;
     }
 
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
+    .layout { max-width: 1400px; margin: 0 auto; }
 
     .channel-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 16px;
-      background: #1a1d24;
-      border-radius: 12px 12px 0 0;
-      border-bottom: 1px solid #2a2d34;
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px; background: #1a1d24;
+      border-radius: 12px; border: 1px solid #2a2d34;
+      margin-bottom: 12px;
     }
-
     .channel-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: #2a4d8a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 14px;
-      color: #fff;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: #2a4d8a; display: flex;
+      align-items: center; justify-content: center;
+      font-weight: 600; font-size: 14px; color: #fff;
     }
-
-    .channel-info {
-      flex: 1;
-    }
-
-    .channel-name {
-      font-size: 15px;
-      font-weight: 600;
-      color: #6da3e8;
-    }
-
-    .channel-desc {
-      font-size: 12px;
-      color: #8a8a8a;
-      margin-top: 2px;
-    }
-
+    .channel-info { flex: 1; }
+    .channel-name { font-size: 15px; font-weight: 600; color: #6da3e8; }
+    .channel-desc { font-size: 12px; color: #8a8a8a; margin-top: 2px; }
     .live-indicator {
-      font-size: 11px;
-      color: #6dd49e;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      font-size: 11px; color: #6dd49e;
+      display: flex; align-items: center; gap: 4px;
     }
-
     .live-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #6dd49e;
-      animation: pulse 2s infinite;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #6dd49e; animation: pulse 2s infinite;
     }
-
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
     }
 
-    .stats {
+    /* 메인 그리드 */
+    .main-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      padding: 12px 16px;
-      background: #1a1d24;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
     }
 
+    @media (max-width: 900px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    .main-area {
+      background: #1a1d24; border-radius: 12px;
+      border: 1px solid #2a2d34; overflow: hidden;
+    }
+
+    .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; padding: 12px 16px;
+      border-bottom: 1px solid #2a2d34;
+    }
     .stat {
-      background: #22252c;
-      padding: 10px;
-      border-radius: 8px;
-      text-align: center;
+      background: #22252c; padding: 10px;
+      border-radius: 8px; text-align: center;
     }
-
-    .stat-label {
-      font-size: 11px;
-      color: #8a8a8a;
-      margin-bottom: 2px;
-    }
-
-    .stat-value {
-      font-size: 18px;
-      font-weight: 600;
-      color: #e0e0e0;
-    }
+    .stat-label { font-size: 11px; color: #8a8a8a; margin-bottom: 2px; }
+    .stat-value { font-size: 18px; font-weight: 600; color: #e0e0e0; }
 
     .filters {
-      display: flex;
-      gap: 6px;
+      display: flex; gap: 6px;
       padding: 12px 16px;
-      background: #1a1d24;
-      overflow-x: auto;
+      border-bottom: 1px solid #2a2d34;
       flex-wrap: wrap;
     }
-
     .filter-chip {
-      font-size: 12px;
-      padding: 5px 12px;
-      border-radius: 14px;
-      background: #2a2d34;
-      color: #b0b0b0;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s;
+      font-size: 12px; padding: 5px 12px;
+      border-radius: 14px; background: #2a2d34;
+      color: #b0b0b0; cursor: pointer;
+      border: none; transition: all 0.2s;
       white-space: nowrap;
     }
-
-    .filter-chip:hover {
-      background: #3a3d44;
-    }
-
-    .filter-chip.active {
-      background: #2a4d8a;
-      color: #fff;
-    }
+    .filter-chip:hover { background: #3a3d44; }
+    .filter-chip.active { background: #2a4d8a; color: #fff; }
 
     .news-section {
-      background: #1a1d24;
       padding: 12px 16px;
+      max-height: 800px;
+      overflow-y: auto;
     }
-
     .section-title {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      color: #f0f0f0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 15px; font-weight: 600;
+      margin-bottom: 12px; color: #f0f0f0;
     }
-
     .news-item {
-      display: flex;
-      gap: 10px;
-      padding: 12px 0;
-      font-size: 14px;
-      line-height: 1.5;
+      display: flex; gap: 10px; padding: 12px 0;
+      font-size: 14px; line-height: 1.5;
       border-bottom: 1px solid #2a2d34;
-      cursor: pointer;
-      transition: background 0.2s;
+      cursor: pointer; transition: background 0.2s;
     }
-
     .news-item:hover {
       background: #22252c;
-      margin: 0 -16px;
-      padding: 12px 16px;
+      margin: 0 -16px; padding: 12px 16px;
     }
-
-    .news-item:last-child {
-      border-bottom: none;
-    }
-
-    .news-icon {
-      font-size: 16px;
-      flex-shrink: 0;
-      width: 22px;
-    }
-
-    .news-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .news-time {
-      color: #8a8a8a;
-      font-size: 12px;
-      margin-bottom: 2px;
-    }
-
-    .news-headline {
-      color: #e0e0e0;
-    }
-
+    .news-item:last-child { border-bottom: none; }
+    .news-icon { font-size: 16px; flex-shrink: 0; width: 22px; }
+    .news-content { flex: 1; min-width: 0; }
+    .news-time { color: #8a8a8a; font-size: 12px; margin-bottom: 2px; }
+    .news-headline { color: #e0e0e0; }
     .ticker {
-      display: inline-block;
-      padding: 1px 6px;
-      background: #2a3d5c;
-      color: #6da3e8;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      margin-left: 4px;
+      display: inline-block; padding: 1px 6px;
+      background: #2a3d5c; color: #6da3e8;
+      border-radius: 4px; font-size: 11px;
+      font-weight: 600; margin-left: 4px;
       vertical-align: middle;
     }
+    .ticker.hot { background: #5c2a2a; color: #e88a8a; }
+    .ticker.green { background: #1f4d3a; color: #6dd49e; }
 
-    .ticker.hot {
-      background: #5c2a2a;
-      color: #e88a8a;
+    /* 사이드바 */
+    .sidebar { display: flex; flex-direction: column; gap: 12px; }
+    .sidebar-box {
+      background: #1a1d24; border-radius: 12px;
+      border: 1px solid #2a2d34; padding: 14px 16px;
+    }
+    .sidebar-title {
+      font-size: 13px; font-weight: 600;
+      color: #f0f0f0; margin-bottom: 10px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+    }
+    .add-btn {
+      background: #2a4d8a; color: #fff;
+      border: none; padding: 4px 10px;
+      border-radius: 12px; font-size: 11px;
+      cursor: pointer; font-weight: 500;
+    }
+    .add-btn:hover { background: #3a5d9a; }
+
+    /* 종목 그룹 헤더 */
+    .group-header {
+      font-size: 11px; color: #8a8a8a;
+      margin: 8px 0 4px; padding: 0 4px;
+    }
+    .group-header.first { margin-top: 0; }
+
+    /* 미국 주식 - 가격 표시 */
+    .us-stock {
+      padding: 8px 4px;
+      border-bottom: 1px solid #2a2d34;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .us-stock:last-child { border-bottom: none; }
+
+    .stock-info { flex: 1; min-width: 0; }
+    .stock-symbol {
+      font-size: 12px; color: #e0e0e0;
+      font-weight: 500;
+    }
+    .stock-name {
+      font-size: 10px; color: #8a8a8a;
+      margin-left: 6px;
     }
 
-    .ticker.green {
-      background: #1f4d3a;
-      color: #6dd49e;
+    .stock-price-area {
+      text-align: right;
+      min-width: 80px;
+    }
+    .stock-price {
+      font-size: 12px; font-weight: 500;
+      color: #e0e0e0;
+    }
+    .stock-change {
+      font-size: 10px;
+    }
+    .price-up { color: #6dd49e !important; }
+    .price-down { color: #e88a8a !important; }
+    .price-flat { color: #8a8a8a !important; }
+    .price-loading {
+      font-size: 10px; color: #6a6a6a;
+      font-style: italic;
+    }
+
+    /* 한국 주식 - 네이버 링크 */
+    .kr-stock {
+      padding: 8px 4px;
+      border-bottom: 1px solid #2a2d34;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .kr-stock:last-child { border-bottom: none; }
+
+    .naver-link {
+      background: #1d4d2d; color: #6dd49e;
+      border: none; padding: 4px 8px;
+      border-radius: 6px; font-size: 10px;
+      cursor: pointer; font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .naver-link:hover { background: #2d5d3d; }
+
+    .delete-btn {
+      background: transparent; color: #6a6a6a;
+      border: none; cursor: pointer; font-size: 13px;
+      padding: 2px 4px; border-radius: 4px;
+    }
+    .delete-btn:hover { background: #5c2a2a; color: #e88a8a; }
+
+    .add-form {
+      display: none; flex-direction: column;
+      gap: 8px; margin-top: 8px;
+      padding: 10px; background: #22252c;
+      border-radius: 8px;
+    }
+    .add-form.show { display: flex; }
+    .add-input {
+      width: 100%; padding: 6px 10px;
+      background: #1a1d24; border: 1px solid #2a2d34;
+      border-radius: 6px; color: #e0e0e0; font-size: 12px;
+    }
+    .add-input::placeholder { color: #6a6a6a; }
+    .add-actions { display: flex; gap: 6px; }
+    .add-actions button {
+      flex: 1; padding: 5px 8px;
+      border-radius: 6px; border: none;
+      font-size: 11px; cursor: pointer;
+    }
+    .btn-confirm { background: #2a4d8a; color: #fff; }
+    .btn-cancel { background: #2a2d34; color: #b0b0b0; }
+    .quick-add {
+      display: flex; flex-wrap: wrap;
+      gap: 4px; margin-top: 6px;
+    }
+    .quick-chip {
+      font-size: 10px; padding: 3px 8px;
+      background: #2a2d34; color: #b0b0b0;
+      border-radius: 10px; cursor: pointer; border: none;
+    }
+    .quick-chip:hover { background: #3a3d44; }
+
+    .calendar-item {
+      padding: 6px 0; font-size: 12px;
+      border-bottom: 1px solid #2a2d34;
+    }
+    .calendar-item:last-child { border-bottom: none; }
+    .calendar-date { color: #6da3e8; font-weight: 500; font-size: 11px; }
+    .calendar-event { color: #e0e0e0; margin-top: 2px; }
+
+    .placeholder-msg {
+      font-size: 11px; color: #6a6a6a;
+      text-align: center; padding: 16px 8px;
+      font-style: italic;
     }
 
     .footer {
-      background: #1a1d24;
-      padding: 14px 16px;
-      border-radius: 0 0 12px 12px;
-      text-align: center;
-      font-size: 12px;
-      color: #6a6a6a;
-    }
-
-    @media (max-width: 480px) {
-      body { padding: 8px 0; }
-      .container { padding: 0 8px; }
+      background: #1a1d24; padding: 14px 16px;
+      border-radius: 12px; border: 1px solid #2a2d34;
+      margin-top: 12px; text-align: center;
+      font-size: 12px; color: #6a6a6a;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="layout">
+
     <div class="channel-header">
       <div class="channel-avatar">VB</div>
       <div class="channel-info">
@@ -249,34 +285,109 @@
       </div>
     </div>
 
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-label">오늘 수집</div>
-        <div class="stat-value" id="stat-total">0</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">실적</div>
-        <div class="stat-value" id="stat-earning">0</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">매크로</div>
-        <div class="stat-value" id="stat-macro">0</div>
-      </div>
-    </div>
+    <div class="main-grid">
 
-    <div class="filters">
-      <button class="filter-chip active" data-filter="all">전체</button>
-      <button class="filter-chip" data-filter="memory">메모리/HBM</button>
-      <button class="filter-chip" data-filter="power">AI 전력</button>
-      <button class="filter-chip" data-filter="optic">광학/패키징</button>
-      <button class="filter-chip" data-filter="bigtech">빅테크 capex</button>
-      <button class="filter-chip" data-filter="earning">실적시즌</button>
-      <button class="filter-chip" data-filter="macro">매크로</button>
-    </div>
+      <div class="main-area">
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">오늘 수집</div>
+            <div class="stat-value" id="stat-total">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">실적</div>
+            <div class="stat-value" id="stat-earning">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">매크로</div>
+            <div class="stat-value" id="stat-macro">0</div>
+          </div>
+        </div>
 
-    <div class="news-section">
-      <div class="section-title">📰 최신 뉴스</div>
-      <div id="news-list">
+        <div class="filters">
+          <button class="filter-chip active" data-filter="all">전체</button>
+          <button class="filter-chip" data-filter="memory">메모리/HBM</button>
+          <button class="filter-chip" data-filter="power">AI 전력</button>
+          <button class="filter-chip" data-filter="optic">광학/패키징</button>
+          <button class="filter-chip" data-filter="bigtech">빅테크 capex</button>
+          <button class="filter-chip" data-filter="earning">실적시즌</button>
+          <button class="filter-chip" data-filter="macro">매크로</button>
+        </div>
+
+        <div class="news-section">
+          <div class="section-title">📰 최신 뉴스</div>
+          <div id="news-list"></div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+
+        <div class="sidebar-box">
+          <div class="sidebar-title">
+            <span>📊 관심 종목</span>
+            <button class="add-btn" id="toggle-add-btn">+ 추가</button>
+          </div>
+
+          <div id="watchlist"></div>
+
+          <div class="add-form" id="add-form">
+            <input type="text" class="add-input" id="add-input"
+                   placeholder="미국: NASDAQ:NVDA / 한국: KRX:005930">
+            <div class="add-actions">
+              <button class="btn-confirm" id="confirm-add">추가</button>
+              <button class="btn-cancel" id="cancel-add">취소</button>
+            </div>
+            <div style="font-size: 10px; color: #8a8a8a; margin-top: 4px;">
+              빠른 추가:
+            </div>
+            <div class="quick-add">
+              <button class="quick-chip" data-symbol="KRX:005930" data-name="삼성전자">삼성전자</button>
+              <button class="quick-chip" data-symbol="KRX:000660" data-name="SK하이닉스">SK하이닉스</button>
+              <button class="quick-chip" data-symbol="KRX:010120" data-name="LS일렉트릭">LS일렉</button>
+              <button class="quick-chip" data-symbol="KRX:267260" data-name="HD현대일렉">HD현대일렉</button>
+              <button class="quick-chip" data-symbol="KRX:298040" data-name="효성중공업">효성중공업</button>
+              <button class="quick-chip" data-symbol="KRX:034020" data-name="두산에너빌">두산에너빌</button>
+              <button class="quick-chip" data-symbol="NASDAQ:NVDA" data-name="NVIDIA">NVDA</button>
+              <button class="quick-chip" data-symbol="NASDAQ:MSFT" data-name="Microsoft">MSFT</button>
+              <button class="quick-chip" data-symbol="NASDAQ:GOOGL" data-name="Alphabet">GOOGL</button>
+              <button class="quick-chip" data-symbol="NASDAQ:META" data-name="Meta">META</button>
+              <button class="quick-chip" data-symbol="NASDAQ:AMZN" data-name="Amazon">AMZN</button>
+              <button class="quick-chip" data-symbol="NYSE:GEV" data-name="GE Vernova">GEV</button>
+              <button class="quick-chip" data-symbol="NYSE:ETN" data-name="Eaton">ETN</button>
+              <button class="quick-chip" data-symbol="NYSE:TSM" data-name="TSMC">TSM</button>
+              <button class="quick-chip" data-symbol="NASDAQ:MU" data-name="Micron">MU</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-box">
+          <div class="sidebar-title">📅 다가오는 이벤트</div>
+          <div id="calendar-list">
+            <div class="calendar-item">
+              <div class="calendar-date">5/27 (화)</div>
+              <div class="calendar-event">엔비디아 1Q26 실적</div>
+            </div>
+            <div class="calendar-item">
+              <div class="calendar-date">6/4 (수)</div>
+              <div class="calendar-event">FOMC 금리 결정</div>
+            </div>
+            <div class="calendar-item">
+              <div class="calendar-date">7/22-25</div>
+              <div class="calendar-event">빅테크 2Q 실적 시작</div>
+            </div>
+            <div class="calendar-item">
+              <div class="calendar-date">8월 중</div>
+              <div class="calendar-event">잭슨홀 미팅</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-box">
+          <div class="sidebar-title">📱 텔레그램</div>
+          <div class="placeholder-msg">
+            추후 추가 예정
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -286,7 +397,445 @@
   </div>
 
   <script>
-   let newsData = [];
+    /* 관심 종목 관리 */
+    const DEFAULT_WATCHLIST = [
+      { symbol: 'KRX:000660', name: 'SK하이닉스' },
+      { symbol: 'KRX:005930', name: '삼성전자' },
+      { symbol: 'KRX:010120', name: 'LS일렉트릭' },
+      { symbol: 'KRX:267260', name: 'HD현대일렉' },
+      { symbol: 'KRX:298040', name: '효성중공업' },
+      { symbol: 'KRX:034020', name: '두산에너빌' },
+      { symbol: 'NASDAQ:NVDA', name: 'NVIDIA' },
+      { symbol: 'NASDAQ:MSFT', name: 'Microsoft' },
+      { symbol: 'NASDAQ:GOOGL', name: 'Alphabet' },
+      { symbol: 'NASDAQ:META', name: 'Meta' },
+      { symbol: 'NASDAQ:AMZN', name: 'Amazon' },
+      { symbol: 'NYSE:GEV', name: 'GE Vernova' },
+      { symbol: 'NYSE:ETN', name: 'Eaton' },
+      { symbol: 'NYSE:TSM', name: 'TSMC' },
+      { symbol: 'NASDAQ:MU', name: 'Micron' }
+    ];
+
+    function loadWatchlist() {
+      const saved = localStorage.getItem('myWatchlist');
+      if (saved) {
+        try { return JSON.parse(saved); }
+        catch (e) { console.error('관심 종목 로드 실패:', e); }
+      }
+      return [...DEFAULT_WATCHLIST];
+    }
+
+    function saveWatchlist(list) {
+      localStorage.setItem('myWatchlist', JSON.stringify(list));
+    }
+
+    let watchlist = loadWatchlist();
+
+    /* 한국/미국 구분 */
+    function isKoreanStock(symbol) {
+      return symbol.startsWith('KRX:') || symbol.startsWith('KOSDAQ:');
+    }
+
+    /* 네이버 금융 URL */
+    function getNaverUrl(symbol) {
+      const code = symbol.split(':')[1];
+      return `https://finance.naver.com/item/main.nhn?code=${code}`;
+    }
+
+    /* Yahoo Finance API로 미국 주식 가격 가져오기 */
+    async function fetchUSPrice(symbol) {
+      const ticker = symbol.split(':')[1];
+      const apiUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`;
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+
+      try {
+        const response = await fetch(proxyUrl);
+        const data = await response.json();
+        const yahooData = JSON.parse(data.contents);
+
+        const result = yahooData.chart?.result?.[0];
+        if (!result) return null;
+
+        const meta = result.meta;
+        const price = meta.regularMarketPrice;
+        const previousClose = meta.previousClose || meta.chartPreviousClose;
+        const change = price - previousClose;
+        const changePercent = (change / previousClose) * 100;
+
+        return {
+          price: price.toFixed(2),
+          change: change.toFixed(2),
+          changePercent: changePercent.toFixed(2)
+        };
+      } catch (error) {
+        console.error('가격 가져오기 실패:', symbol, error);
+        return null;
+      }
+    }
+
+    /* 관심 종목 리스트 렌더링 */
+    function renderWatchlist() {
+      const container = document.getElementById('watchlist');
+
+      if (watchlist.length === 0) {
+        container.innerHTML = '<div class="placeholder-msg">관심 종목이 없습니다. 추가해주세요.</div>';
+        return;
+      }
+
+      const usStocks = watchlist.filter(item => !isKoreanStock(item.symbol));
+      const krStocks = watchlist.filter(item => isKoreanStock(item.symbol));
+
+      let html = '';
+
+      if (usStocks.length > 0) {
+        html += '<div class="group-header first">미국 주식 (실시간)</div>';
+        html += usStocks.map(item => {
+          const idx = watchlist.indexOf(item);
+          return `
+            <div class="us-stock" data-symbol="${item.symbol}">
+              <div class="stock-info">
+                <span class="stock-symbol">${item.symbol.split(':')[1]}</span>
+                <span class="stock-name">${item.name}</span>
+              </div>
+              <div class="stock-price-area" id="price-${idx}">
+                <div class="price-loading">로딩...</div>
+              </div>
+              <button class="delete-btn" data-idx="${idx}">🗑️</button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      if (krStocks.length > 0) {
+        html += '<div class="group-header">한국 주식 (네이버 금융)</div>';
+        html += krStocks.map(item => {
+          const idx = watchlist.indexOf(item);
+          const code = item.symbol.split(':')[1];
+          return `
+            <div class="kr-stock">
+              <div class="stock-info">
+                <span class="stock-symbol">${code}</span>
+                <span class="stock-name">${item.name}</span>
+              </div>
+              <a href="${getNaverUrl(item.symbol)}" target="_blank" class="naver-link">📊 네이버</a>
+              <button class="delete-btn" data-idx="${idx}">🗑️</button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      container.innerHTML = html;
+
+      // 삭제 버튼
+      container.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.dataset.idx);
+          watchlist.splice(idx, 1);
+          saveWatchlist(watchlist);
+          renderWatchlist();
+          loadAllUSPrices();
+        });
+      });
+    }
+
+    /* 모든 미국 주식 가격 로드 */
+    async function loadAllUSPrices() {
+      const usStocks = watchlist.filter(item => !isKoreanStock(item.symbol));
+
+      for (const item of usStocks) {
+        const idx = watchlist.indexOf(item);
+        const priceEl = document.getElementById(`price-${idx}`);
+        if (!priceEl) continue;
+
+        const data = await fetchUSPrice(item.symbol);
+        if (!data) {
+          priceEl.innerHTML = '<div class="price-loading">데이터 없음</div>';
+          continue;
+        }
+
+        const isUp = parseFloat(data.changePercent) > 0;
+        const isDown = parseFloat(data.changePercent) < 0;
+        const colorClass = isUp ? 'price-up' : isDown ? 'price-down' : 'price-flat';
+        const sign = isUp ? '+' : '';
+
+        priceEl.innerHTML = `
+          <div class="stock-price ${colorClass}">$${data.price}</div>
+          <div class="stock-change ${colorClass}">${sign}${data.changePercent}%</div>
+        `;
+      }
+    }
+
+    function addSymbol(symbol, name) {
+      if (watchlist.some(item => item.symbol === symbol)) {
+        alert('이미 추가된 종목입니다.');
+        return;
+      }
+      watchlist.push({ symbol, name });
+      saveWatchlist(watchlist);
+      renderWatchlist();
+      loadAllUSPrices();
+    }
+
+    function setupAddForm() {
+      const toggleBtn = document.getElementById('toggle-add-btn');
+      const addForm = document.getElementById('add-form');
+      const addInput = document.getElementById('add-input');
+      const confirmBtn = document.getElementById('confirm-add');
+      const cancelBtn = document.getElementById('cancel-add');
+
+      toggleBtn.addEventListener('click', () => {
+        addForm.classList.toggle('show');
+        if (addForm.classList.contains('show')) addInput.focus();
+      });
+
+      confirmBtn.addEventListener('click', () => {
+        const value = addInput.value.trim();
+        if (!value) return;
+        if (!value.includes(':')) {
+          alert('형식: 거래소:티커 (예: NASDAQ:NVDA, KRX:005930)');
+          return;
+        }
+        const ticker = value.split(':')[1];
+        addSymbol(value, ticker);
+        addInput.value = '';
+        addForm.classList.remove('show');
+      });
+
+      cancelBtn.addEventListener('click', () => {
+        addInput.value = '';
+        addForm.classList.remove('show');
+      });
+
+      addInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') confirmBtn.click();
+      });
+
+      document.querySelectorAll('.quick-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const symbol = chip.dataset.symbol;
+          const name = chip.dataset.name;
+          addSymbol(symbol, name);
+          addForm.classList.remove('show');
+        });
+      });
+    }
+
+    /* 5분마다 가격 자동 갱신 */
+    setInterval(() => {
+      loadAllUSPrices();
+    }, 5 * 60 * 1000);
+
+    /* 뉴스 피드 */
+    let newsData = [];
+
+    function isJunkNews(headline) {
+      if (!headline || headline.length < 10) return true;
+
+      const blacklist = [
+        '리딩방', '무료 리딩', '매수 추천', '매도 추천',
+        '특급 매매', '급등 임박', '지금 사야',
+        '추천 종목', '오늘의 종목', 'TOP 5',
+        '100% 수익', '대박 종목', '필수 매수',
+        '비밀 정보', '특급 정보',
+        '★', '☆', '◆', '◇', '■', '□',
+        'Best Stocks to Buy', 'Top 5 Stocks', 'Top 10 Stocks',
+        'Stocks to Buy Now', 'Best AI Stocks',
+        'Strong Buy', 'Penny Stocks',
+        'Get Rich', 'Investment Tips',
+        'Stock Picks', 'should you buy',
+        'is it time to buy',
+        'Motley Fool', 'Zacks Rank'
+      ];
+
+      for (const word of blacklist) {
+        if (headline.includes(word)) return true;
+      }
+
+      const words = headline.split(/\s+/);
+      const wordCount = {};
+      for (const word of words) {
+        if (word.length < 2) continue;
+        wordCount[word] = (wordCount[word] || 0) + 1;
+        if (wordCount[word] >= 3) return true;
+      }
+
+      if (/^[\d\s%원달러]+$/.test(headline)) return true;
+      return false;
+    }
+
+    const CATEGORY_KEYWORDS = {
+      optic: [
+        'CoWoS', 'TSMC',
+        '광학', '광 인터커넥트', '인터커넥트',
+        '광 트랜시버', '트랜시버',
+        '광섬유', '광 케이블',
+        'CPO', 'co-packaged',
+        '첨단 패키징', '패키징',
+        'FC-BGA', 'FCBGA',
+        'EMIB', 'Camtek',
+        'Coherent', 'Lumentum',
+        'optical interconnect', 'optical transceiver',
+        'advanced packaging', 'silicon photonics',
+        'fiber optic'
+      ],
+      memory: [
+        'HBM', 'HBM3', 'HBM4', 'HBM3E',
+        '메모리', 'DRAM', 'NAND', '낸드',
+        '디램', '낸드플래시',
+        'SK하이닉스', '하이닉스',
+        '마이크론', 'Micron',
+        '삼성전자 메모리',
+        'memory chip', 'memory shortage',
+        'Samsung memory', 'SK Hynix'
+      ],
+      power: [
+        '변압기', '765kV', '800kV', 'GIS', 'GCB',
+        'SMR', '원전', '원자력',
+        '데이터센터 전력', '전력 인프라',
+        '그리드', 'PJM',
+        'LS일렉', 'LS ELECTRIC', 'LS일렉트릭',
+        'HD현대일렉', '현대일렉',
+        '효성중공업',
+        '두산에너빌리티', '두산',
+        'GE Vernova', 'Vernova',
+        'Eaton', 'Quanta',
+        '백악관', 'Ratepayer',
+        '전력반도체', 'SiC', 'GaN',
+        'transformer', 'switchgear',
+        'data center power', 'power grid',
+        'nuclear', 'small modular reactor',
+        'utility', 'electricity demand'
+      ],
+      earning: [
+        '실적', '실적 발표', '실적발표',
+        '1Q', '2Q', '3Q', '4Q', 'Q1', 'Q2', 'Q3', 'Q4',
+        '분기 실적', '컨센서스',
+        'EPS', '영업이익', '매출',
+        '가이던스', '전망치 상향',
+        'beat', 'miss',
+        '서프라이즈', '쇼크',
+        'earnings', 'quarterly results',
+        'revenue', 'guidance',
+        'beats estimates', 'misses estimates'
+      ],
+      bigtech: [
+        'capex', 'CapEx',
+        '엔비디아', 'NVIDIA', 'NVDA',
+        '마이크로소프트', 'Microsoft', 'MSFT',
+        '알파벳', 'Alphabet', 'GOOGL', '구글', 'Google',
+        '메타', 'Meta', 'META',
+        '아마존', 'Amazon', 'AMZN',
+        '오픈AI', 'OpenAI',
+        'Anthropic',
+        '하이퍼스케일', 'hyperscaler',
+        'AI 수익', 'AI 매출', 'AI 의구심',
+        '코파일럿', 'Copilot',
+        'AI 투자', 'capex 우려',
+        'AI revenue', 'AI monetization',
+        'cloud spending', 'AI investment',
+        'Azure', 'AWS', 'GCP'
+      ],
+      macro: [
+        '연준', 'Fed', 'FOMC',
+        '금리', '기준금리', '금리인상', '금리인하',
+        '유가', '원유', 'WTI', '브렌트',
+        'OPEC',
+        '인플레이션', 'CPI', 'PPI',
+        '환율', '달러',
+        '백악관', 'Ratepayer Protection',
+        'Burry', '버블', 'bubble',
+        'Howard Marks',
+        'GDP', '경기',
+        'interest rate', 'rate cut', 'rate hike',
+        'inflation', 'recession',
+        'oil price', 'crude oil',
+        'AI bubble', 'market crash'
+      ]
+    };
+
+    function detectCategory(headline, defaultCategory) {
+      const scores = {};
+      for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+        scores[category] = 0;
+        for (const keyword of keywords) {
+          if (headline.includes(keyword)) scores[category]++;
+        }
+      }
+      let bestCategory = defaultCategory;
+      let bestScore = 0;
+      for (const [category, score] of Object.entries(scores)) {
+        if (score > bestScore) {
+          bestScore = score;
+          bestCategory = category;
+        }
+      }
+      return bestScore > 0 ? bestCategory : defaultCategory;
+    }
+
+    const RSS_SOURCES = [
+      { url: 'https://news.google.com/rss/search?q=SK하이닉스&hl=ko', category: 'memory', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=삼성전자+HBM&hl=ko', category: 'memory', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=마이크론&hl=ko', category: 'memory', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=LS일렉트릭&hl=ko', category: 'power', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=HD현대일렉트릭&hl=ko', category: 'power', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=효성중공업&hl=ko', category: 'power', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=두산에너빌리티&hl=ko', category: 'power', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=NVIDIA+AI&hl=ko', category: 'bigtech', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=Microsoft+capex&hl=ko', category: 'bigtech', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=AI+데이터센터&hl=ko', category: 'bigtech', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=AI+광학+패키징&hl=ko', category: 'optic', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=TSMC+CoWoS&hl=ko', category: 'optic', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=연준+금리&hl=ko', category: 'macro', icon: '🏛️' },
+      { url: 'https://news.google.com/rss/search?q=유가&hl=ko', category: 'macro', icon: '🏛️' }
+    ];
+
+    async function fetchFromRSS(rssUrl, category, defaultIcon) {
+      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        if (data.status !== 'ok') {
+          console.error('RSS 가져오기 실패:', rssUrl);
+          return [];
+        }
+        return data.items
+          .filter(item => !isJunkNews(item.title))
+          .slice(0, 10)
+          .map(item => ({
+            time: formatRSSTime(item.pubDate),
+            category: detectCategory(item.title, category),
+            icon: defaultIcon,
+            headline: item.title,
+            ticker: null,
+            tickerType: null,
+            link: item.link
+          }));
+      } catch (error) {
+        console.error('RSS 에러:', error);
+        return [];
+      }
+    }
+
+    function formatRSSTime(pubDate) {
+      const date = new Date(pubDate);
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${month}/${day} ${hours}:${minutes}`;
+    }
+
+    function getTimestamp(timeStr) {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+      const [datePart, timePart] = timeStr.split(' ');
+      const [month, day] = datePart.split('/').map(Number);
+      const [hour, minute] = (timePart || '00:00').split(':').map(Number);
+      let year = currentYear;
+      if (month > currentMonth) year = currentYear - 1;
+      return new Date(year, month - 1, day, hour, minute).getTime();
+    }
 
     function updateStats() {
       document.getElementById('stat-total').textContent = newsData.length;
@@ -300,7 +849,6 @@
       const tickerHtml = news.ticker
         ? `<span class="ticker ${news.tickerType || ''}">${news.ticker}</span>`
         : '';
-
       return `
         <div class="news-item">
           <span class="news-icon">${news.icon}</span>
@@ -316,7 +864,6 @@
       const filtered = filter === 'all'
         ? newsData
         : newsData.filter(n => n.category === filter);
-
       const html = filtered.map(renderNewsItem).join('');
       document.getElementById('news-list').innerHTML = html ||
         '<div style="text-align: center; padding: 30px; color: #6a6a6a;">해당 카테고리 뉴스 없음</div>';
@@ -339,253 +886,36 @@
       });
     }
 
-function isJunkNews(headline) {
-  if (!headline || headline.length < 10) return true;
-
-  const blacklist = [
-    '리딩방', '무료 리딩', '매수 추천', '매도 추천',
-    '특급 매매', '급등 임박', '지금 사야',
-    '추천 종목', '오늘의 종목', 'TOP 5',
-    '100% 수익', '대박 종목', '필수 매수',
-    '비밀 정보', '특급 정보',
-    '★', '☆', '◆', '◇', '■', '□'
-  ];
-
-  for (const word of blacklist) {
-    if (headline.includes(word)) return true;
-
-  }
-
-  const words = headline.split(/\s+/);
-  const wordCount = {};
-  for (const word of words) {
-    if (word.length < 2) continue;
-    wordCount[word] = (wordCount[word] || 0) + 1;
-    if (wordCount[word] >= 3) return true;
-  
-  }
-
-  if (/^[\d\s%원달러]+$/.test(headline)) return true;
-
-  return false;
-}
-
-const CATEGORY_KEYWORDS = {
-  optic: [
-    'CoWoS', 'TSMC',
-    '광학', '광 인터커넥트', '인터커넥트',
-    '광 트랜시버', '트랜시버',
-    '광섬유', '광 케이블',
-    'CPO', 'co-packaged',
-    '첨단 패키징', '패키징',
-    'FC-BGA', 'FCBGA',
-    'EMIB', 'Camtek',
-    'Coherent', 'Lumentum'
-  ],
-
-  memory: [
-    'HBM', 'HBM3', 'HBM4', 'HBM3E',
-    '메모리', 'DRAM', 'NAND', '낸드',
-    '디램', '낸드플래시',
-    'SK하이닉스', '하이닉스',
-    '마이크론', 'Micron',
-    '삼성전자 메모리'
-  ],
-
-  power: [
-    '변압기', '765kV', '800kV', 'GIS', 'GCB',
-    'SMR', '원전', '원자력',
-    '데이터센터 전력', '전력 인프라',
-    '그리드', 'PJM',
-    'LS일렉', 'LS ELECTRIC', 'LS일렉트릭',
-    'HD현대일렉', '현대일렉',
-    '효성중공업',
-    '두산에너빌리티', '두산',
-    'GE Vernova', 'Vernova',
-    'Eaton', 'Quanta',
-    '백악관', 'Ratepayer',
-    '전력반도체', 'SiC', 'GaN'
-  ],
-
-  earning: [
-    '실적', '실적 발표', '실적발표',
-    '1Q', '2Q', '3Q', '4Q',
-    '분기 실적', '컨센서스',
-    'EPS', '영업이익', '매출',
-    '가이던스', '전망치 상향',
-    'beat', 'miss',
-    '서프라이즈', '쇼크'
-  ],
-
-  bigtech: [
-    'capex', 'CapEx',
-    '엔비디아', 'NVIDIA', 'NVDA',
-    '마이크로소프트', 'Microsoft', 'MSFT',
-    '알파벳', 'Alphabet', 'GOOGL', '구글', 'Google',
-    '메타', 'Meta', 'META',
-    '아마존', 'Amazon', 'AMZN',
-    '오픈AI', 'OpenAI',
-    'Anthropic',
-    '하이퍼스케일', 'hyperscaler',
-    'AI 수익', 'AI 매출', 'AI 의구심',
-    '코파일럿', 'Copilot',
-    'AI 투자', 'capex 우려'
-  ],
-
-  macro: [
-    '연준', 'Fed', 'FOMC',
-    '금리', '기준금리', '금리인상', '금리인하',
-    '유가', '원유', 'WTI', '브렌트',
-    'OPEC',
-    '인플레이션', 'CPI', 'PPI',
-    '환율', '달러',
-    '백악관', 'Ratepayer Protection',
-    'Burry', '버블', 'bubble',
-    'Howard Marks',
-    'GDP', '경기'
-  ]
-};
-
-function detectCategory(headline, defaultCategory) {
-  const scores = {};
-
-  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-    scores[category] = 0;
-    for (const keyword of keywords) {
-      if (headline.includes(keyword)) {
-        scores[category]++;
+    async function loadNews() {
+      try {
+        const localResponse = await fetch('news.json');
+        const localNews = await localResponse.json();
+        const allRssNews = await Promise.all(
+          RSS_SOURCES.map(source =>
+            fetchFromRSS(source.url, source.category, source.icon)
+          )
+        );
+        const flatRssNews = allRssNews.flat();
+        const seen = new Set();
+        const uniqueRssNews = flatRssNews.filter(item => {
+          if (seen.has(item.headline)) return false;
+          seen.add(item.headline);
+          return true;
+        });
+        newsData = [...uniqueRssNews, ...localNews];
+        newsData.sort((a, b) => getTimestamp(b.time) - getTimestamp(a.time));
+        updateStats();
+        renderNews();
+        updateTimestamp();
+      } catch (error) {
+        console.error('뉴스 불러오기 실패:', error);
       }
     }
-  }
 
-  let bestCategory = defaultCategory;
-  let bestScore = 0;
-
-  for (const [category, score] of Object.entries(scores)) {
-    if (score > bestScore) {
-      bestScore = score;
-      bestCategory = category;
-    }
-  }
-
-const finalCategory = bestScore > 0 ? bestCategory : defaultCategory;
-
-  if (bestScore > 0 && finalCategory !== defaultCategory) {
-    console.log(`🏷️ ${defaultCategory} → ${finalCategory}: ${headline.substring(0, 50)}`);
-  }
-
-  return finalCategory;
-}
-
-    async function fetchFromRSS(rssUrl, category, defaultIcon) {
-  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-  try {
-    const response = await fetch(apiUrl);
-    const data = await response.json();
-
-    if (data.status !== 'ok') {
-      console.error('RSS 가져오기 실패:', rssUrl);
-      return [];
-    }
-
-  return data.items
-  .filter(item => !isJunkNews(item.title))
-  .slice(0, 10)
-  .map(item => ({
-    time: formatRSSTime(item.pubDate),
-    category: detectCategory(item.title, category),
-    icon: defaultIcon,
-    headline: item.title,
-    ticker: null,
-    tickerType: null,
-    link: item.link
-  }));
-  } catch (error) {
-    console.error('RSS 에러:', error);
-    return [];
-  }
-}
-
-function formatRSSTime(pubDate) {
-  const date = new Date(pubDate);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${month}/${day} ${hours}:${minutes}`;
-}
-
-function getTimestamp(timeStr) {
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1;
-
-  const [datePart, timePart] = timeStr.split(' ');
-  const [month, day] = datePart.split('/').map(Number);
-  const [hour, minute] = (timePart || '00:00').split(':').map(Number);
-
-  let year = currentYear;
-  if (month > currentMonth) {
-    year = currentYear - 1;
-  }
-
-  return new Date(year, month - 1, day, hour, minute).getTime();
-}
-
-const RSS_SOURCES = [
-  { url: 'https://news.google.com/rss/search?q=SK하이닉스&hl=ko', category: 'memory', icon: '📄' },
-  { url: 'https://news.google.com/rss/search?q=삼성전자+HBM&hl=ko', category: 'memory', icon: '📄' },
-  { url: 'https://news.google.com/rss/search?q=마이크론&hl=ko', category: 'memory', icon: '📄' },
-
-  { url: 'https://news.google.com/rss/search?q=LS일렉트릭&hl=ko', category: 'power', icon: '📄' },
-  { url: 'https://news.google.com/rss/search?q=HD현대일렉트릭&hl=ko', category: 'power', icon: '📄' },
-  { url: 'https://news.google.com/rss/search?q=효성중공업&hl=ko', category: 'power', icon: '📄' },
-  { url: 'https://news.google.com/rss/search?q=두산에너빌리티&hl=ko', category: 'power', icon: '📄' },
-
-  { url: 'https://news.google.com/rss/search?q=NVIDIA+AI&hl=ko', category: 'bigtech', icon: '📄' },
-  { url: 'https://news.google.com/rss/search?q=Microsoft+capex&hl=ko', category: 'bigtech', icon: '📄' },
-  { url: 'https://news.google.com/rss/search?q=AI+데이터센터&hl=ko', category: 'bigtech', icon: '📄' },
-
-  { url: 'https://news.google.com/rss/search?q=AI+광학+패키징&hl=ko', category: 'optic', icon: '📄' },
-  { url: 'https://news.google.com/rss/search?q=TSMC+CoWoS&hl=ko', category: 'optic', icon: '📄' },
-
-  { url: 'https://news.google.com/rss/search?q=연준+금리&hl=ko', category: 'macro', icon: '🏛️' },
-  { url: 'https://news.google.com/rss/search?q=유가&hl=ko', category: 'macro', icon: '🏛️' }
-];
-
-async function loadNews() {
-  try {
-    const localResponse = await fetch('news.json');
-    const localNews = await localResponse.json();
-
-    const allRssNews = await Promise.all(
-      RSS_SOURCES.map(source =>
-        fetchFromRSS(source.url, source.category, source.icon)
-      )
-    );
-
-    const flatRssNews = allRssNews.flat();
-
-    const seen = new Set();
-    const uniqueRssNews = flatRssNews.filter(item => {
-      if (seen.has(item.headline)) return false;
-      seen.add(item.headline);
-      return true;
-    });
-
-    newsData = [...uniqueRssNews, ...localNews];
-
-    newsData.sort((a, b) => getTimestamp(b.time) - getTimestamp(a.time));
-
-    updateStats();
-    renderNews();
-    updateTimestamp();
-  } catch (error) {
-    console.error('뉴스 불러오기 실패:', error);
-  }
-}
-
+    /* 페이지 시작 */
+    renderWatchlist();
+    setupAddForm();
+    loadAllUSPrices();
     loadNews();
     setupFilters();
   </script>
