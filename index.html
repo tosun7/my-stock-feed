@@ -918,55 +918,95 @@
         .filter(({ item }) => item.tags && item.tags.includes(currentFilter));
     }
 
-    async function fetchUSPriceWithChart(symbol) {
-      const ticker = symbol.split(':')[1];
-      const apiUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d&includePrePost=true`;
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+    // 시총 캐시 (1시간 유효)
+const marketCapCache = {};
 
-      try {
-        const response = await fetch(proxyUrl);
-        const data = await response.json();
-        const yahooData = JSON.parse(data.contents);
+async function fetchMarketCap(ticker) {
+  // 캐시 확인
+  const cached = marketCapCache[ticker];
+  const now = Date.now();
+  if (cached && (now - cached.time) < 60 * 60 * 1000) {
+    return cached.value;
+  }
 
-        const result = yahooData.chart?.result?.[0];
-        if (!result) return null;
+  const apiUrl = `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${ticker}?modules=price,summaryDetail`;
+  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
 
-        const meta = result.meta;
-        const prices = result.indicators?.quote?.[0]?.close || [];
-        const cleanPrices = prices.filter(p => p !== null && p !== undefined);
+  try {
+    const response = await fetch(proxyUrl);
+    const data = await response.json();
+    const yahooData = JSON.parse(data.contents);
+    const result = yahooData.quoteSummary?.result?.[0];
+    if (!result) return null;
 
-        if (cleanPrices.length === 0) return null;
+    const marketCap = result.price?.marketCap?.raw 
+                   || result.summaryDetail?.marketCap?.raw
+                   || null;
 
-        const currentPrice = meta.regularMarketPrice;
-        const previousClose = meta.previousClose || meta.chartPreviousClose;
-        const dayChange = currentPrice - previousClose;
-        const dayChangePercent = (dayChange / previousClose) * 100;
+    // 캐싱
+    marketCapCache[ticker] = { value: marketCap, time: now };
+    return marketCap;
+  } catch (error) {
+    console.error('시총 가져오기 실패:', ticker, error);
+    return null;
+  }
+}
 
-        const weekAgoPrice = cleanPrices[0];
-        const weekChangePercent = ((currentPrice - weekAgoPrice) / weekAgoPrice) * 100;
+async function fetchUSPriceWithChart(symbol) {
+  const ticker = symbol.split(':')[1];
+  const apiUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d&includePrePost=true`;
+  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
 
-        let postMarketPrice = null;
-        let postMarketChangePercent = null;
-        if (meta.postMarketPrice && meta.postMarketPrice !== currentPrice) {
-          postMarketPrice = meta.postMarketPrice;
-          const postChange = postMarketPrice - currentPrice;
-          postMarketChangePercent = (postChange / currentPrice) * 100;
-        }
+  try {
+    const response = await fetch(proxyUrl);
+    const data = await response.json();
+    const yahooData = JSON.parse(data.contents);
 
-        return {
-          price: currentPrice.toFixed(2),
-          dayChangePercent: dayChangePercent.toFixed(2),
-          weekChangePercent: weekChangePercent.toFixed(2),
-          prices: cleanPrices,
-          marketCap: meta.marketCap || null,
-          postMarketPrice: postMarketPrice ? postMarketPrice.toFixed(2) : null,
-          postMarketChangePercent: postMarketChangePercent !== null ? postMarketChangePercent.toFixed(2) : null
-        };
-      } catch (error) {
-        console.error('가격 가져오기 실패:', symbol, error);
-        return null;
-      }
+    const result = yahooData.chart?.result?.[0];
+    if (!result) return null;
+
+    const meta = result.meta;
+    const prices = result.indicators?.quote?.[0]?.close || [];
+    const cleanPrices = prices.filter(p => p !== null && p !== undefined);
+
+    if (cleanPrices.length === 0) return null;
+
+    const currentPrice = meta.regularMarketPrice;
+    const previousClose = meta.previousClose || meta.chartPreviousClose;
+    const dayChange = currentPrice - previousClose;
+    const dayChangePercent = (dayChange / previousClose) * 100;
+
+    const weekAgoPrice = cleanPrices[0];
+    const weekChangePercent = ((currentPrice - weekAgoPrice) / weekAgoPrice) * 100;
+
+    let postMarketPrice = null;
+    let postMarketChangePercent = null;
+    if (meta.postMarketPrice && meta.postMarketPrice !== currentPrice) {
+      postMarketPrice = meta.postMarketPrice;
+      const postChange = postMarketPrice - currentPrice;
+      postMarketChangePercent = (postChange / currentPrice) * 100;
     }
+
+    // chart에서 시총 시도, 없으면 별도 호출
+    let marketCap = meta.marketCap || null;
+    if (!marketCap) {
+      marketCap = await fetchMarketCap(ticker);
+    }
+
+    return {
+      price: currentPrice.toFixed(2),
+      dayChangePercent: dayChangePercent.toFixed(2),
+      weekChangePercent: weekChangePercent.toFixed(2),
+      prices: cleanPrices,
+      marketCap: marketCap,
+      postMarketPrice: postMarketPrice ? postMarketPrice.toFixed(2) : null,
+      postMarketChangePercent: postMarketChangePercent !== null ? postMarketChangePercent.toFixed(2) : null
+    };
+  } catch (error) {
+    console.error('가격 가져오기 실패:', symbol, error);
+    return null;
+  }
+}
 
     function formatMarketCap(value) {
       if (!value) return '-';
