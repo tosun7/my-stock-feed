@@ -45,16 +45,8 @@
       font-size: 11px;
       min-width: 100px;
     }
-    .time-label {
-      color: #6a6a6a;
-      font-size: 9px;
-      margin-bottom: 1px;
-    }
-    .time-value {
-      color: #e0e0e0;
-      font-weight: 500;
-      font-variant-numeric: tabular-nums;
-    }
+    .time-label { color: #6a6a6a; font-size: 9px; margin-bottom: 1px; }
+    .time-value { color: #e0e0e0; font-weight: 500; font-variant-numeric: tabular-nums; }
 
     .market-box {
       border-radius: 6px;
@@ -67,9 +59,7 @@
     .market-box.post { background: #2d1d40; color: #b794f4; }
     .market-box.closed { background: #2a2d34; color: #8a8a8a; }
     .market-status-label {
-      font-size: 9px;
-      opacity: 0.8;
-      margin-bottom: 1px;
+      font-size: 9px; opacity: 0.8; margin-bottom: 1px;
       display: flex; align-items: center; gap: 4px;
     }
     .status-dot {
@@ -81,10 +71,7 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
     }
-    .market-remaining {
-      font-weight: 500;
-      font-variant-numeric: tabular-nums;
-    }
+    .market-remaining { font-weight: 500; font-variant-numeric: tabular-nums; }
 
     .nav-links { display: flex; gap: 6px; }
     .nav-link {
@@ -121,9 +108,7 @@
       grid-template-columns: 3fr 1fr;
       gap: 12px;
     }
-    @media (max-width: 1100px) {
-      .main-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 1100px) { .main-grid { grid-template-columns: 1fr; } }
 
     .main-area {
       background: #1a1d24;
@@ -137,10 +122,7 @@
       justify-content: space-between;
       margin-bottom: 12px;
     }
-    .main-title {
-      font-size: 16px; font-weight: 600;
-      color: #f0f0f0;
-    }
+    .main-title { font-size: 16px; font-weight: 600; color: #f0f0f0; }
     .main-actions { display: flex; gap: 8px; }
     .btn-primary {
       background: #2a4d8a; color: #fff;
@@ -160,12 +142,7 @@
       gap: 6px;
       align-items: center;
     }
-    .filter-label {
-      font-size: 10px;
-      color: #6a6a6a;
-      margin-right: 4px;
-      font-weight: 500;
-    }
+    .filter-label { font-size: 10px; color: #6a6a6a; margin-right: 4px; font-weight: 500; }
     .filter-btn {
       font-size: 12px;
       padding: 5px 12px;
@@ -178,23 +155,10 @@
       white-space: nowrap;
       font-family: inherit;
     }
-    .filter-btn:hover {
-      background: #3a3d44;
-      color: #e0e0e0;
-    }
-    .filter-btn.active {
-      background: #2a4d8a;
-      color: #fff;
-      font-weight: 500;
-    }
-    .filter-btn.no-tag {
-      opacity: 0.7;
-      font-style: italic;
-    }
-    .filter-btn .count {
-      opacity: 0.7;
-      margin-left: 2px;
-    }
+    .filter-btn:hover { background: #3a3d44; color: #e0e0e0; }
+    .filter-btn.active { background: #2a4d8a; color: #fff; font-weight: 500; }
+    .filter-btn.no-tag { opacity: 0.7; font-style: italic; }
+    .filter-btn .count { opacity: 0.7; margin-left: 2px; }
 
     .stocks-grid {
       display: grid;
@@ -233,16 +197,12 @@
     .card-symbol {
       font-size: 13px; font-weight: 600;
       color: #e0e0e0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .card-name {
       font-size: 9px; color: #8a8a8a;
       margin-top: 1px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .card-actions { display: flex; gap: 2px; flex-shrink: 0; }
     .card-btn {
@@ -261,10 +221,7 @@
     .price-up { color: #6dd49e; }
     .price-down { color: #e88a8a; }
     .price-flat { color: #c0c0c0; }
-    .price-loading {
-      font-size: 11px; color: #6a6a6a;
-      font-style: italic;
-    }
+    .price-loading { font-size: 11px; color: #6a6a6a; font-style: italic; }
 
     .card-changes {
       display: flex; gap: 6px;
@@ -288,11 +245,7 @@
       font-size: 8px;
     }
 
-    .card-chart {
-      height: 24px;
-      margin: 6px 0;
-      width: 100%;
-    }
+    .card-chart { height: 24px; margin: 6px 0; width: 100%; }
     .card-chart svg { width: 100%; height: 100%; }
 
     .card-bottom {
@@ -306,6 +259,7 @@
     }
     .card-tags {
       display: flex; flex-wrap: wrap; gap: 2px;
+      margin-bottom: 4px;
     }
     .tag {
       font-size: 8px;
@@ -322,6 +276,24 @@
       padding: 1px 2px;
     }
 
+    /* 카드의 메모 (한 줄 표시) */
+    .card-memo {
+      font-size: 9px;
+      color: #a0a0a0;
+      padding: 4px 6px;
+      background: #1a1d24;
+      border-radius: 4px;
+      border-left: 2px solid #2a4d8a;
+      line-height: 1.3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .card-memo .memo-icon {
+      opacity: 0.6;
+      margin-right: 2px;
+    }
+
     .no-results {
       grid-column: 1 / -1;
       text-align: center;
@@ -329,11 +301,7 @@
       color: #6a6a6a;
       font-size: 13px;
     }
-    .no-results .small {
-      font-size: 11px;
-      color: #6a6a6a;
-      margin-top: 6px;
-    }
+    .no-results .small { font-size: 11px; color: #6a6a6a; margin-top: 6px; }
 
     .sidebar { display: flex; flex-direction: column; gap: 12px; }
     .sidebar-box {
@@ -375,10 +343,7 @@
       font-size: 9px;
       font-weight: 600;
     }
-    .news-ticker.macro {
-      background: #2d1d40;
-      color: #b794f4;
-    }
+    .news-ticker.macro { background: #2d1d40; color: #b794f4; }
     .news-mini-headline {
       font-size: 11px; color: #c0c0c0;
       line-height: 1.4;
@@ -435,6 +400,25 @@
     }
     .modal-input::placeholder { color: #6a6a6a; }
     .modal-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* 메모 입력 textarea */
+    .modal-textarea {
+      width: 100%; padding: 8px 12px;
+      background: #22252c; border: 1px solid #2a2d34;
+      border-radius: 6px; color: #e0e0e0;
+      font-size: 12px;
+      font-family: inherit;
+      margin-bottom: 8px;
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+    }
+    .modal-textarea::placeholder { color: #6a6a6a; }
+    .modal-textarea:focus {
+      outline: none;
+      border-color: #3a4d6c;
+    }
+
     .modal-label {
       font-size: 11px; color: #8a8a8a;
       margin: 8px 0 4px;
@@ -652,10 +636,13 @@
       <div class="modal-label">회사명</div>
       <input type="text" class="modal-input" id="modal-name" placeholder="NVIDIA">
 
-      <div class="modal-label">태그 (엔터 또는 콤마로 구분)</div>
+      <div class="modal-label">태그 (엔터 또는 콤마로 구분, 그룹화 용도)</div>
       <div class="tags-input-area" id="tags-area">
         <input type="text" class="tag-input-field" id="tag-input" placeholder="태그 입력...">
       </div>
+
+      <div class="modal-label">📝 메모 (자유롭게, 카드에 한 줄 표시됨)</div>
+      <textarea class="modal-textarea" id="modal-memo" placeholder="예: 1Q26 실적 5/27, EPS $3.18 컨센서스&#10;Blackwell GPU 양산 2026..."></textarea>
 
       <div class="modal-label">빠른 종목 추가:</div>
       <div class="quick-add-modal">
@@ -680,9 +667,7 @@
   </div>
 
   <script>
-    /* ============================================
-       한글명 사전 (티커 → 한글 회사명)
-       ============================================ */
+    /* 한글명 사전 */
     const KOREAN_NAMES = {
       'NVDA': ['엔비디아'],
       'MSFT': ['마이크로소프트'],
@@ -715,14 +700,16 @@
       'JPM': ['JP모건'],
       'BAC': ['뱅크오브아메리카'],
       'XOM': ['엑손모빌'],
-      'CCJ': ['카메코']
+      'CCJ': ['카메코'],
+      'TSSI': ['TSS'],
+      'POWI': ['파워 인테그레이션스'],
+      'SNDK': ['샌디스크']
     };
 
     function getKoreanNames(ticker) {
       return KOREAN_NAMES[ticker] || [];
     }
 
-    /* 미국 시간 + 장 상태 */
     function getUSEasternTime() {
       const now = new Date();
       const formatter = new Intl.DateTimeFormat('en-US', {
@@ -819,17 +806,17 @@
       document.getElementById('post-times').textContent = `${toKRTime(16, 0)}~${toKRTime(20, 0)}`;
     }
 
-    /* 관심 종목 */
+    /* 관심 종목 - memo 필드 추가 */
     const DEFAULT_WATCHLIST = [
-      { symbol: 'NASDAQ:NVDA', name: 'NVIDIA', tags: [] },
-      { symbol: 'NASDAQ:MSFT', name: 'Microsoft', tags: [] },
-      { symbol: 'NASDAQ:GOOGL', name: 'Alphabet', tags: [] },
-      { symbol: 'NASDAQ:META', name: 'Meta', tags: [] },
-      { symbol: 'NASDAQ:AMZN', name: 'Amazon', tags: [] },
-      { symbol: 'NYSE:GEV', name: 'GE Vernova', tags: [] },
-      { symbol: 'NYSE:ETN', name: 'Eaton', tags: [] },
-      { symbol: 'NYSE:TSM', name: 'TSMC', tags: [] },
-      { symbol: 'NASDAQ:MU', name: 'Micron', tags: [] }
+      { symbol: 'NASDAQ:NVDA', name: 'NVIDIA', tags: [], memo: '' },
+      { symbol: 'NASDAQ:MSFT', name: 'Microsoft', tags: [], memo: '' },
+      { symbol: 'NASDAQ:GOOGL', name: 'Alphabet', tags: [], memo: '' },
+      { symbol: 'NASDAQ:META', name: 'Meta', tags: [], memo: '' },
+      { symbol: 'NASDAQ:AMZN', name: 'Amazon', tags: [], memo: '' },
+      { symbol: 'NYSE:GEV', name: 'GE Vernova', tags: [], memo: '' },
+      { symbol: 'NYSE:ETN', name: 'Eaton', tags: [], memo: '' },
+      { symbol: 'NYSE:TSM', name: 'TSMC', tags: [], memo: '' },
+      { symbol: 'NASDAQ:MU', name: 'Micron', tags: [], memo: '' }
     ];
 
     function loadWatchlist() {
@@ -837,9 +824,11 @@
       if (saved) {
         try {
           const list = JSON.parse(saved);
+          // 기존 데이터 마이그레이션: memo 필드 없으면 추가
           return list.map(item => ({
             ...item,
-            tags: item.tags || []
+            tags: item.tags || [],
+            memo: item.memo || ''
           })).filter(item =>
             !item.symbol.startsWith('KRX:') &&
             !item.symbol.startsWith('KOSDAQ:')
@@ -857,7 +846,6 @@
     let watchlist = loadWatchlist();
     saveWatchlist(watchlist);
 
-    /* 현재 활성 필터 */
     let currentFilter = 'all';
 
     function collectAllTags() {
@@ -1013,11 +1001,24 @@
       `;
     }
 
+    /* 메모 첫 줄만 추출 */
+    function getFirstLine(text) {
+      if (!text) return '';
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      return lines[0] || '';
+    }
+
     function renderStockCard(item, idx) {
       const tagsHtml = item.tags && item.tags.length > 0
         ? item.tags.slice(0, 3).map(t => `<span class="tag">${t}</span>`).join('') +
           (item.tags.length > 3 ? `<span class="tag-empty">+${item.tags.length - 3}</span>` : '')
         : '<span class="tag-empty">태그 없음</span>';
+
+      // 메모 첫 줄만 카드에 표시
+      const memoLine = getFirstLine(item.memo);
+      const memoHtml = memoLine
+        ? `<div class="card-memo" title="${item.memo.replace(/"/g, '&quot;')}"><span class="memo-icon">📝</span>${memoLine}</div>`
+        : '';
 
       return `
         <div class="stock-card" data-idx="${idx}" data-symbol="${item.symbol}">
@@ -1042,6 +1043,7 @@
               <span>-</span>
             </div>
             <div class="card-tags">${tagsHtml}</div>
+            ${memoHtml}
           </div>
         </div>
       `;
@@ -1093,7 +1095,7 @@
             renderFilterBar();
             renderWatchlist();
             loadAllUSPrices();
-            loadNews();  // 종목 삭제 시 뉴스도 갱신
+            loadNews();
           }
         });
       });
@@ -1175,6 +1177,7 @@
       document.getElementById('modal-title').textContent = '종목 추가';
       document.getElementById('modal-symbol').value = '';
       document.getElementById('modal-name').value = '';
+      document.getElementById('modal-memo').value = '';
       document.getElementById('modal-symbol').disabled = false;
       renderTagsInModal();
       document.getElementById('stock-modal').classList.add('show');
@@ -1188,6 +1191,7 @@
       document.getElementById('modal-title').textContent = `${item.name} 편집`;
       document.getElementById('modal-symbol').value = item.symbol;
       document.getElementById('modal-name').value = item.name;
+      document.getElementById('modal-memo').value = item.memo || '';
       document.getElementById('modal-symbol').disabled = true;
       renderTagsInModal();
       document.getElementById('stock-modal').classList.add('show');
@@ -1266,6 +1270,7 @@
       saveBtn.addEventListener('click', () => {
         const symbol = document.getElementById('modal-symbol').value.trim();
         const name = document.getElementById('modal-name').value.trim();
+        const memo = document.getElementById('modal-memo').value;
 
         if (!symbol || !name) { alert('종목 코드와 회사명을 모두 입력해주세요.'); return; }
         if (!symbol.includes(':')) { alert('형식: 거래소:티커 (예: NASDAQ:NVDA)'); return; }
@@ -1279,11 +1284,12 @@
         if (editingIndex >= 0) {
           watchlist[editingIndex].name = name;
           watchlist[editingIndex].tags = [...currentTags];
+          watchlist[editingIndex].memo = memo;
         } else {
           if (watchlist.some(item => item.symbol === symbol)) {
             alert('이미 추가된 종목입니다.'); return;
           }
-          watchlist.push({ symbol, name, tags: [...currentTags] });
+          watchlist.push({ symbol, name, tags: [...currentTags], memo });
         }
 
         saveWatchlist(watchlist);
@@ -1291,7 +1297,7 @@
         renderFilterBar();
         renderWatchlist();
         loadAllUSPrices();
-        loadNews();  // 종목 추가/편집 시 뉴스도 갱신
+        loadNews();
       });
 
       cancelBtn.addEventListener('click', closeModal);
@@ -1396,9 +1402,7 @@
       });
     }
 
-    /* ============================================
-       뉴스 - 관심 종목 기반 동적 생성
-       ============================================ */
+    /* 뉴스 */
     let newsData = [];
 
     function isJunkNews(headline) {
@@ -1415,21 +1419,18 @@
       return false;
     }
 
-    /* 관심 종목 기반 RSS 소스 자동 생성 */
     function buildRSSSourcesFromWatchlist() {
       const sources = [];
 
       watchlist.forEach(item => {
         const ticker = item.symbol.split(':')[1];
 
-        // 영문명 검색 (예: "NVIDIA")
         sources.push({
           query: item.name,
           ticker: ticker,
           icon: '📊'
         });
 
-        // 한글명 검색 (사전에 있으면)
         const koreanNames = getKoreanNames(ticker);
         koreanNames.forEach(koreanName => {
           sources.push({
@@ -1440,7 +1441,6 @@
         });
       });
 
-      // 매크로 보조 (고정 3개)
       sources.push({ query: '연준 금리', ticker: 'MACRO', icon: '🏛️' });
       sources.push({ query: '미국 증시 마감', ticker: 'MACRO', icon: '🏛️' });
       sources.push({ query: '빅테크 실적', ticker: 'MACRO', icon: '🏛️' });
@@ -1457,7 +1457,7 @@
         if (data.status !== 'ok') return [];
         return data.items
           .filter(item => !isJunkNews(item.title))
-          .slice(0, 3)  // 종목당 3건
+          .slice(0, 3)
           .map(item => ({
             time: formatRSSTime(item.pubDate),
             icon: source.icon,
@@ -1498,7 +1498,6 @@
         return;
       }
 
-      // 상위 30건 표시
       const top = newsData.slice(0, 30);
 
       container.innerHTML = top.map(news => {
