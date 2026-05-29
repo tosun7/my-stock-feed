@@ -1182,12 +1182,17 @@
     }
 
     function addTag(text) {
-      const trimmed = text.trim();
-      if (!trimmed) return;
-      if (currentTags.includes(trimmed)) return;
-      currentTags.push(trimmed);
-      renderTagsInModal();
-    }
+  if (!text) return;
+  // 콤마로 분리해서 여러 태그를 한 번에 추가 가능
+  const parts = text.split(',');
+  parts.forEach(part => {
+    const trimmed = part.trim();
+    if (!trimmed) return;
+    if (currentTags.includes(trimmed)) return;
+    currentTags.push(trimmed);
+  });
+  renderTagsInModal();
+}
 
     function setupModal() {
       const tagInput = document.getElementById('tag-input');
