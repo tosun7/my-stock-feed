@@ -24,8 +24,7 @@
       margin-bottom: 8px;
     }
     .back-link {
-      color: #6da3e8;
-      font-size: 13px;
+      color: #6da3e8; font-size: 13px;
       text-decoration: none;
       padding: 6px 12px;
       border-radius: 8px;
@@ -46,10 +45,8 @@
     .time-label { color: #6a6a6a; font-size: 9px; margin-bottom: 1px; }
     .time-value { color: #e0e0e0; font-weight: 500; font-variant-numeric: tabular-nums; }
     .market-box {
-      border-radius: 6px;
-      padding: 5px 10px;
-      font-size: 11px;
-      min-width: 110px;
+      border-radius: 6px; padding: 5px 10px;
+      font-size: 11px; min-width: 110px;
     }
     .market-box.regular { background: #1f4d3a; color: #6dd49e; }
     .market-box.pre { background: #1a3050; color: #6da3e8; }
@@ -59,10 +56,7 @@
       font-size: 9px; opacity: 0.8; margin-bottom: 1px;
       display: flex; align-items: center; gap: 4px;
     }
-    .status-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: currentColor;
-    }
+    .status-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
     .market-box.regular .status-dot { animation: pulse 2s infinite; }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
@@ -117,7 +111,6 @@
     .price-down { color: #e88a8a; }
     .price-flat { color: #c0c0c0; }
 
-    /* 메모 박스 */
     .memo-box {
       background: #1a1d24;
       border: 1px solid #2a2d34;
@@ -127,68 +120,43 @@
       border-left: 3px solid #2a4d8a;
     }
     .memo-box-header {
-      display: flex;
-      justify-content: space-between;
+      display: flex; justify-content: space-between;
       align-items: center;
       margin-bottom: 8px;
     }
-    .memo-box-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #f0f0f0;
-    }
+    .memo-box-title { font-size: 13px; font-weight: 600; color: #f0f0f0; }
     .memo-edit-btn {
-      background: #2a4d8a;
-      color: #fff;
-      border: none;
-      padding: 4px 12px;
-      border-radius: 6px;
-      font-size: 11px;
-      cursor: pointer;
-      font-family: inherit;
+      background: #2a4d8a; color: #fff;
+      border: none; padding: 4px 12px;
+      border-radius: 6px; font-size: 11px;
+      cursor: pointer; font-family: inherit;
     }
     .memo-edit-btn:hover { background: #3a5d9a; }
     .memo-content {
-      font-size: 12px;
-      color: #c0c0c0;
+      font-size: 12px; color: #c0c0c0;
       line-height: 1.6;
       white-space: pre-wrap;
       word-wrap: break-word;
     }
-    .memo-empty {
-      color: #6a6a6a;
-      font-style: italic;
-      font-size: 12px;
-    }
-
-    /* 인라인 메모 편집 */
-    .memo-editor {
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .memo-empty { color: #6a6a6a; font-style: italic; font-size: 12px; }
+    .memo-editor { display: none; flex-direction: column; gap: 8px; }
     .memo-editor.show { display: flex; }
     .memo-textarea {
-      width: 100%;
-      padding: 10px 12px;
+      width: 100%; padding: 10px 12px;
       background: #22252c;
       border: 1px solid #2a2d34;
       border-radius: 6px;
-      color: #e0e0e0;
-      font-size: 12px;
+      color: #e0e0e0; font-size: 12px;
       font-family: inherit;
-      resize: vertical;
-      min-height: 100px;
+      resize: vertical; min-height: 100px;
       line-height: 1.6;
     }
     .memo-textarea:focus { outline: none; border-color: #3a4d6c; }
     .memo-actions { display: flex; gap: 6px; justify-content: flex-end; }
     .memo-actions button {
       padding: 5px 12px;
-      border-radius: 6px;
-      border: none;
-      font-size: 11px;
-      cursor: pointer;
+      border-radius: 6px; border: none;
+      font-size: 11px; cursor: pointer;
       font-family: inherit;
     }
     .btn-confirm { background: #2a4d8a; color: #fff; }
@@ -200,9 +168,7 @@
       gap: 12px;
       margin-bottom: 12px;
     }
-    @media (max-width: 1100px) {
-      .detail-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 1100px) { .detail-grid { grid-template-columns: 1fr; } }
 
     .panel {
       background: #1a1d24;
@@ -211,10 +177,8 @@
       padding: 14px 16px;
     }
     .panel-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #f0f0f0;
-      margin-bottom: 10px;
+      font-size: 13px; font-weight: 600;
+      color: #f0f0f0; margin-bottom: 10px;
     }
 
     .chart-container {
@@ -225,11 +189,7 @@
     }
     .tradingview-widget-container { height: 100%; width: 100%; }
 
-    .info-stack {
-      display: flex; flex-direction: column;
-      gap: 12px;
-    }
-
+    .info-stack { display: flex; flex-direction: column; gap: 12px; }
     .info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -254,10 +214,8 @@
     .earning-date { color: #6da3e8; font-weight: 500; font-size: 11px; }
     .earning-name { color: #e0e0e0; font-size: 12px; margin-top: 2px; }
     .earning-dday {
-      font-size: 10px;
-      color: #6dd49e;
-      font-weight: 500;
-      margin-top: 3px;
+      font-size: 10px; color: #6dd49e;
+      font-weight: 500; margin-top: 3px;
     }
     .earning-dday.urgent { color: #e88a8a; }
 
@@ -268,18 +226,14 @@
       padding: 14px 16px;
     }
     .news-section-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #f0f0f0;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
+      font-size: 13px; font-weight: 600;
+      color: #f0f0f0; margin-bottom: 12px;
+      display: flex; align-items: center;
       justify-content: space-between;
     }
     .news-count-badge { font-size: 11px; color: #6a6a6a; font-weight: 400; }
     .news-keywords {
-      font-size: 10px;
-      color: #6a6a6a;
+      font-size: 10px; color: #6a6a6a;
       margin-bottom: 8px;
     }
     .news-keyword-chip {
@@ -311,18 +265,14 @@
     .empty-state {
       text-align: center;
       padding: 40px 20px;
-      color: #6a6a6a;
-      font-size: 12px;
+      color: #6a6a6a; font-size: 12px;
     }
-
     .loading-msg {
       text-align: center;
       padding: 20px;
-      color: #6a6a6a;
-      font-size: 12px;
+      color: #6a6a6a; font-size: 12px;
       font-style: italic;
     }
-
     .footer {
       background: #1a1d24;
       padding: 14px 16px;
@@ -330,8 +280,7 @@
       border: 1px solid #2a2d34;
       margin-top: 12px;
       text-align: center;
-      font-size: 12px;
-      color: #6a6a6a;
+      font-size: 12px; color: #6a6a6a;
     }
   </style>
 </head>
@@ -364,7 +313,6 @@
       <div class="loading-msg">종목 정보 로딩 중...</div>
     </div>
 
-    <!-- 메모 박스 (새 추가!) -->
     <div class="memo-box">
       <div class="memo-box-header">
         <div class="memo-box-title">📝 내 메모</div>
@@ -374,7 +322,7 @@
         <span class="memo-empty">메모가 비어있습니다. "편집" 버튼을 눌러 메모를 추가하세요.</span>
       </div>
       <div class="memo-editor" id="memo-editor">
-        <textarea class="memo-textarea" id="memo-input" placeholder="예: 1Q26 실적 5/27, EPS $3.18 컨센서스&#10;Blackwell GPU 양산 2026..."></textarea>
+        <textarea class="memo-textarea" id="memo-input" placeholder="자유롭게 메모..."></textarea>
         <div class="memo-actions">
           <button class="btn-cancel" id="memo-cancel">취소</button>
           <button class="btn-confirm" id="memo-save">저장</button>
@@ -383,7 +331,6 @@
     </div>
 
     <div class="detail-grid">
-
       <div class="panel">
         <div class="panel-title">📈 차트</div>
         <div class="chart-container" id="chart-container">
@@ -392,7 +339,6 @@
       </div>
 
       <div class="info-stack">
-
         <div class="panel">
           <div class="panel-title">📋 기본 정보</div>
           <div class="info-grid" id="info-grid">
@@ -406,7 +352,6 @@
             <div class="loading-msg">이벤트 검색 중...</div>
           </div>
         </div>
-
       </div>
     </div>
 
@@ -473,13 +418,10 @@
 
     document.title = `${ticker} - ${stockItem.name} | My Stock Feed`;
 
-    /* ============================================
-       메모 시스템
-       ============================================ */
+    /* 메모 시스템 */
     function renderMemo() {
       const display = document.getElementById('memo-display');
       if (stockItem.memo && stockItem.memo.trim()) {
-        display.innerHTML = '';
         display.textContent = stockItem.memo;
       } else {
         display.innerHTML = '<span class="memo-empty">메모가 비어있습니다. "편집" 버튼을 눌러 메모를 추가하세요.</span>';
@@ -504,7 +446,6 @@
 
       saveBtn.addEventListener('click', () => {
         const newMemo = textarea.value;
-        // localStorage 업데이트
         const list = loadWatchlist();
         const idx = list.findIndex(item =>
           item.symbol.split(':')[1] === ticker ||
@@ -528,9 +469,7 @@
       });
     }
 
-    /* ============================================
-       시간 + 장 상태
-       ============================================ */
+    /* 시간 + 장 상태 */
     function getUSEasternTime() {
       const now = new Date();
       const formatter = new Intl.DateTimeFormat('en-US', {
@@ -618,17 +557,17 @@
     }
 
     /* ============================================
-       가격 + 기본 정보
+       Yahoo Finance - 본인 프록시 사용!
        ============================================ */
     async function fetchStockDetails(symbol) {
       const tickerOnly = symbol.split(':')[1];
-      const apiUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${tickerOnly}?interval=1d&range=1y&includePrePost=true`;
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
 
       try {
-        const response = await fetch(proxyUrl);
-        const data = await response.json();
-        const yahooData = JSON.parse(data.contents);
+        // 본인 Vercel 함수 호출
+        const response = await fetch(`/api/yahoo?endpoint=chart&ticker=${tickerOnly}&range=1y`);
+        if (!response.ok) return null;
+
+        const yahooData = await response.json();
 
         const result = yahooData.chart?.result?.[0];
         if (!result) return null;
@@ -659,12 +598,25 @@
           postMarketChangePercent = (postChange / currentPrice) * 100;
         }
 
+        // 시총 - chart에 없으면 quoteSummary로
+        let marketCap = meta.marketCap || null;
+        if (!marketCap) {
+          try {
+            const capResp = await fetch(`/api/yahoo?endpoint=quoteSummary&ticker=${tickerOnly}`);
+            if (capResp.ok) {
+              const capData = await capResp.json();
+              const r = capData.quoteSummary?.result?.[0];
+              marketCap = r?.price?.marketCap?.raw || r?.summaryDetail?.marketCap?.raw || null;
+            }
+          } catch (e) { /* 무시 */ }
+        }
+
         return {
           price: currentPrice,
           dayChange,
           dayChangePercent,
           previousClose,
-          marketCap: meta.marketCap || null,
+          marketCap: marketCap,
           yearHigh,
           yearLow,
           volume: meta.regularMarketVolume || null,
@@ -774,7 +726,6 @@
       `;
     }
 
-    /* TradingView 차트 */
     function renderTradingViewChart() {
       const container = document.getElementById('chart-container');
       container.innerHTML = '<div id="tradingview-widget" class="tradingview-widget-container"></div>';
@@ -798,7 +749,6 @@
       });
     }
 
-    /* 관련 이벤트 */
     function loadEvents() {
       const saved = localStorage.getItem('myEvents');
       if (saved) {
@@ -849,24 +799,14 @@
       });
 
       const koreanNames = {
-        'NVDA': ['엔비디아'],
-        'MSFT': ['마이크로소프트'],
-        'GOOGL': ['알파벳', '구글'],
-        'META': ['메타'],
-        'AMZN': ['아마존'],
-        'AAPL': ['애플'],
-        'GEV': ['GE 버노바', 'GE Vernova'],
-        'ETN': ['이튼'],
-        'TSM': ['TSMC', '대만 반도체'],
-        'MU': ['마이크론'],
-        'PWR': ['콴타'],
-        'AVGO': ['브로드컴'],
-        'AMD': ['AMD'],
-        'DELL': ['델 테크놀로지스'],
-        'INTC': ['인텔'],
-        'TSSI': ['TSS'],
-        'POWI': ['파워 인테그레이션스'],
-        'SNDK': ['샌디스크']
+        'NVDA': ['엔비디아'], 'MSFT': ['마이크로소프트'],
+        'GOOGL': ['알파벳', '구글'], 'META': ['메타'], 'AMZN': ['아마존'],
+        'AAPL': ['애플'], 'GEV': ['GE 버노바', 'GE Vernova'], 'ETN': ['이튼'],
+        'TSM': ['TSMC', '대만 반도체'], 'MU': ['마이크론'],
+        'PWR': ['콴타'], 'AVGO': ['브로드컴'], 'AMD': ['AMD'],
+        'DELL': ['델 테크놀로지스'], 'INTC': ['인텔'],
+        'TSSI': ['TSS'], 'POWI': ['파워 인테그레이션스'], 'SNDK': ['샌디스크'],
+        'LITE': ['루멘텀'], 'LMB': ['림바흐'], 'RKLB': ['로켓 랩'], 'RDW': ['레드와이어']
       };
       if (koreanNames[ticker]) {
         koreanNames[ticker].forEach(name => keywords.add(name.toLowerCase()));
@@ -913,7 +853,6 @@
       }).join('');
     }
 
-    /* 뉴스 */
     function isJunkNews(headline) {
       if (!headline || headline.length < 10) return true;
       const blacklist = [
@@ -1041,7 +980,6 @@
       document.getElementById('last-update').textContent = now.toLocaleString('ko-KR');
     }
 
-    /* 시작 */
     setInterval(renderTimeAndMarket, 1000);
     setInterval(() => {
       renderStockHeader();

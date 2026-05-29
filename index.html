@@ -34,10 +34,7 @@
     .channel-name { font-size: 14px; font-weight: 600; color: #6da3e8; }
     .channel-desc { font-size: 11px; color: #8a8a8a; margin-top: 2px; }
 
-    .time-boxes {
-      display: flex; gap: 8px; align-items: center;
-      flex-wrap: wrap;
-    }
+    .time-boxes { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .time-box {
       background: #22252c;
       border-radius: 6px;
@@ -62,10 +59,7 @@
       font-size: 9px; opacity: 0.8; margin-bottom: 1px;
       display: flex; align-items: center; gap: 4px;
     }
-    .status-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: currentColor;
-    }
+    .status-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
     .market-box.regular .status-dot { animation: pulse 2s infinite; }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
@@ -214,10 +208,7 @@
     .card-btn:hover { background: #2a2d34; color: #e0e0e0; }
     .card-btn.delete:hover { background: #5c2a2a; color: #e88a8a; }
 
-    .card-price {
-      font-size: 17px; font-weight: 600;
-      line-height: 1.1;
-    }
+    .card-price { font-size: 17px; font-weight: 600; line-height: 1.1; }
     .price-up { color: #6dd49e; }
     .price-down { color: #e88a8a; }
     .price-flat { color: #c0c0c0; }
@@ -276,7 +267,6 @@
       padding: 1px 2px;
     }
 
-    /* 카드의 메모 (한 줄 표시) */
     .card-memo {
       font-size: 9px;
       color: #a0a0a0;
@@ -289,10 +279,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .card-memo .memo-icon {
-      opacity: 0.6;
-      margin-right: 2px;
-    }
+    .card-memo .memo-icon { opacity: 0.6; margin-right: 2px; }
 
     .no-results {
       grid-column: 1 / -1;
@@ -401,7 +388,6 @@
     .modal-input::placeholder { color: #6a6a6a; }
     .modal-input:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* 메모 입력 textarea */
     .modal-textarea {
       width: 100%; padding: 8px 12px;
       background: #22252c; border: 1px solid #2a2d34;
@@ -414,10 +400,7 @@
       line-height: 1.5;
     }
     .modal-textarea::placeholder { color: #6a6a6a; }
-    .modal-textarea:focus {
-      outline: none;
-      border-color: #3a4d6c;
-    }
+    .modal-textarea:focus { outline: none; border-color: #3a4d6c; }
 
     .modal-label {
       font-size: 11px; color: #8a8a8a;
@@ -642,7 +625,7 @@
       </div>
 
       <div class="modal-label">📝 메모 (자유롭게, 카드에 한 줄 표시됨)</div>
-      <textarea class="modal-textarea" id="modal-memo" placeholder="예: 1Q26 실적 5/27, EPS $3.18 컨센서스&#10;Blackwell GPU 양산 2026..."></textarea>
+      <textarea class="modal-textarea" id="modal-memo" placeholder="예: 1Q26 실적 5/27, EPS $3.18 컨센서스..."></textarea>
 
       <div class="modal-label">빠른 종목 추가:</div>
       <div class="quick-add-modal">
@@ -667,43 +650,22 @@
   </div>
 
   <script>
-    /* 한글명 사전 */
     const KOREAN_NAMES = {
-      'NVDA': ['엔비디아'],
-      'MSFT': ['마이크로소프트'],
-      'GOOGL': ['알파벳', '구글'],
-      'GOOG': ['알파벳', '구글'],
-      'META': ['메타'],
-      'AMZN': ['아마존'],
-      'AAPL': ['애플'],
-      'TSLA': ['테슬라'],
-      'GEV': ['GE 버노바', 'GE 베르노바'],
-      'ETN': ['이튼'],
-      'TSM': ['TSMC', '대만 반도체'],
-      'MU': ['마이크론'],
-      'DELL': ['델 테크놀로지스'],
-      'PWR': ['콴타'],
-      'AVGO': ['브로드컴'],
-      'AMD': ['AMD'],
-      'PLTR': ['팔란티어'],
-      'COHR': ['코히어런트'],
-      'LRCX': ['램리서치'],
-      'KLAC': ['KLA'],
-      'AMAT': ['어플라이드 머티리얼즈'],
-      'VRT': ['버티브'],
-      'CRWD': ['크라우드스트라이크'],
-      'ORCL': ['오라클'],
-      'IBM': ['IBM'],
-      'INTC': ['인텔'],
-      'NFLX': ['넷플릭스'],
-      'DIS': ['디즈니'],
-      'JPM': ['JP모건'],
-      'BAC': ['뱅크오브아메리카'],
-      'XOM': ['엑손모빌'],
-      'CCJ': ['카메코'],
-      'TSSI': ['TSS'],
-      'POWI': ['파워 인테그레이션스'],
-      'SNDK': ['샌디스크']
+      'NVDA': ['엔비디아'], 'MSFT': ['마이크로소프트'],
+      'GOOGL': ['알파벳', '구글'], 'GOOG': ['알파벳', '구글'],
+      'META': ['메타'], 'AMZN': ['아마존'], 'AAPL': ['애플'], 'TSLA': ['테슬라'],
+      'GEV': ['GE 버노바', 'GE 베르노바'], 'ETN': ['이튼'],
+      'TSM': ['TSMC', '대만 반도체'], 'MU': ['마이크론'],
+      'DELL': ['델 테크놀로지스'], 'PWR': ['콴타'], 'AVGO': ['브로드컴'],
+      'AMD': ['AMD'], 'PLTR': ['팔란티어'], 'COHR': ['코히어런트'],
+      'LRCX': ['램리서치'], 'KLAC': ['KLA'], 'AMAT': ['어플라이드 머티리얼즈'],
+      'VRT': ['버티브'], 'CRWD': ['크라우드스트라이크'], 'ORCL': ['오라클'],
+      'IBM': ['IBM'], 'INTC': ['인텔'], 'NFLX': ['넷플릭스'],
+      'DIS': ['디즈니'], 'JPM': ['JP모건'], 'BAC': ['뱅크오브아메리카'],
+      'XOM': ['엑손모빌'], 'CCJ': ['카메코'], 'TSSI': ['TSS'],
+      'POWI': ['파워 인테그레이션스'], 'SNDK': ['샌디스크'],
+      'LITE': ['루멘텀'], 'LMB': ['림바흐'], 'RKLB': ['로켓 랩'],
+      'RDW': ['레드와이어']
     };
 
     function getKoreanNames(ticker) {
@@ -806,7 +768,6 @@
       document.getElementById('post-times').textContent = `${toKRTime(16, 0)}~${toKRTime(20, 0)}`;
     }
 
-    /* 관심 종목 - memo 필드 추가 */
     const DEFAULT_WATCHLIST = [
       { symbol: 'NASDAQ:NVDA', name: 'NVIDIA', tags: [], memo: '' },
       { symbol: 'NASDAQ:MSFT', name: 'Microsoft', tags: [], memo: '' },
@@ -824,7 +785,6 @@
       if (saved) {
         try {
           const list = JSON.parse(saved);
-          // 기존 데이터 마이그레이션: memo 필드 없으면 추가
           return list.map(item => ({
             ...item,
             tags: item.tags || [],
@@ -918,100 +878,104 @@
         .filter(({ item }) => item.tags && item.tags.includes(currentFilter));
     }
 
+    /* ============================================
+       Yahoo Finance 호출 - 본인 프록시 사용!
+       ============================================ */
+
     // 시총 캐시 (1시간 유효)
-const marketCapCache = {};
+    const marketCapCache = {};
 
-async function fetchMarketCap(ticker) {
-  // 캐시 확인
-  const cached = marketCapCache[ticker];
-  const now = Date.now();
-  if (cached && (now - cached.time) < 60 * 60 * 1000) {
-    return cached.value;
-  }
+    async function fetchMarketCap(ticker) {
+      const cached = marketCapCache[ticker];
+      const now = Date.now();
+      if (cached && (now - cached.time) < 60 * 60 * 1000) {
+        return cached.value;
+      }
 
-  const apiUrl = `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${ticker}?modules=price,summaryDetail`;
-  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+      try {
+        // 본인 Vercel 함수 호출
+        const response = await fetch(`/api/yahoo?endpoint=quoteSummary&ticker=${ticker}`);
+        if (!response.ok) return null;
 
-  try {
-    const response = await fetch(proxyUrl);
-    const data = await response.json();
-    const yahooData = JSON.parse(data.contents);
-    const result = yahooData.quoteSummary?.result?.[0];
-    if (!result) return null;
+        const yahooData = await response.json();
+        const result = yahooData.quoteSummary?.result?.[0];
+        if (!result) return null;
 
-    const marketCap = result.price?.marketCap?.raw 
-                   || result.summaryDetail?.marketCap?.raw
-                   || null;
+        const marketCap = result.price?.marketCap?.raw
+                       || result.summaryDetail?.marketCap?.raw
+                       || null;
 
-    // 캐싱
-    marketCapCache[ticker] = { value: marketCap, time: now };
-    return marketCap;
-  } catch (error) {
-    console.error('시총 가져오기 실패:', ticker, error);
-    return null;
-  }
-}
-
-async function fetchUSPriceWithChart(symbol) {
-  const ticker = symbol.split(':')[1];
-  const apiUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d&includePrePost=true`;
-  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
-
-  try {
-    const response = await fetch(proxyUrl);
-    const data = await response.json();
-    const yahooData = JSON.parse(data.contents);
-
-    const result = yahooData.chart?.result?.[0];
-    if (!result) return null;
-
-    const meta = result.meta;
-    const prices = result.indicators?.quote?.[0]?.close || [];
-    const cleanPrices = prices.filter(p => p !== null && p !== undefined);
-
-    if (cleanPrices.length === 0) return null;
-
-    const currentPrice = meta.regularMarketPrice;
-    const previousClose = meta.previousClose || meta.chartPreviousClose;
-    const dayChange = currentPrice - previousClose;
-    const dayChangePercent = (dayChange / previousClose) * 100;
-
-    const weekAgoPrice = cleanPrices[0];
-    const weekChangePercent = ((currentPrice - weekAgoPrice) / weekAgoPrice) * 100;
-
-    let postMarketPrice = null;
-    let postMarketChangePercent = null;
-    if (meta.postMarketPrice && meta.postMarketPrice !== currentPrice) {
-      postMarketPrice = meta.postMarketPrice;
-      const postChange = postMarketPrice - currentPrice;
-      postMarketChangePercent = (postChange / currentPrice) * 100;
+        marketCapCache[ticker] = { value: marketCap, time: now };
+        return marketCap;
+      } catch (error) {
+        console.error('시총 가져오기 실패:', ticker, error);
+        return null;
+      }
     }
 
-    // chart에서 시총 시도, 없으면 별도 호출
-    let marketCap = meta.marketCap || null;
-    if (!marketCap) {
-      marketCap = await fetchMarketCap(ticker);
-    }
+    async function fetchUSPriceWithChart(symbol) {
+      const ticker = symbol.split(':')[1];
 
-    return {
-      price: currentPrice.toFixed(2),
-      dayChangePercent: dayChangePercent.toFixed(2),
-      weekChangePercent: weekChangePercent.toFixed(2),
-      prices: cleanPrices,
-      marketCap: marketCap,
-      postMarketPrice: postMarketPrice ? postMarketPrice.toFixed(2) : null,
-      postMarketChangePercent: postMarketChangePercent !== null ? postMarketChangePercent.toFixed(2) : null
-    };
-  } catch (error) {
-    console.error('가격 가져오기 실패:', symbol, error);
-    return null;
-  }
-}
+      try {
+        // 본인 Vercel 함수 호출
+        const response = await fetch(`/api/yahoo?endpoint=chart&ticker=${ticker}&range=5d`);
+        if (!response.ok) {
+          console.error('가격 호출 실패:', ticker, response.status);
+          return null;
+        }
+
+        const yahooData = await response.json();
+
+        const result = yahooData.chart?.result?.[0];
+        if (!result) return null;
+
+        const meta = result.meta;
+        const prices = result.indicators?.quote?.[0]?.close || [];
+        const cleanPrices = prices.filter(p => p !== null && p !== undefined);
+
+        if (cleanPrices.length === 0) return null;
+
+        const currentPrice = meta.regularMarketPrice;
+        const previousClose = meta.previousClose || meta.chartPreviousClose;
+        const dayChange = currentPrice - previousClose;
+        const dayChangePercent = (dayChange / previousClose) * 100;
+
+        const weekAgoPrice = cleanPrices[0];
+        const weekChangePercent = ((currentPrice - weekAgoPrice) / weekAgoPrice) * 100;
+
+        let postMarketPrice = null;
+        let postMarketChangePercent = null;
+        if (meta.postMarketPrice && meta.postMarketPrice !== currentPrice) {
+          postMarketPrice = meta.postMarketPrice;
+          const postChange = postMarketPrice - currentPrice;
+          postMarketChangePercent = (postChange / currentPrice) * 100;
+        }
+
+        // chart에서 시총 시도, 없으면 별도 호출
+        let marketCap = meta.marketCap || null;
+        if (!marketCap) {
+          marketCap = await fetchMarketCap(ticker);
+        }
+
+        return {
+          price: currentPrice.toFixed(2),
+          dayChangePercent: dayChangePercent.toFixed(2),
+          weekChangePercent: weekChangePercent.toFixed(2),
+          prices: cleanPrices,
+          marketCap: marketCap,
+          postMarketPrice: postMarketPrice ? postMarketPrice.toFixed(2) : null,
+          postMarketChangePercent: postMarketChangePercent !== null ? postMarketChangePercent.toFixed(2) : null
+        };
+      } catch (error) {
+        console.error('가격 가져오기 실패:', symbol, error);
+        return null;
+      }
+    }
 
     function formatMarketCap(value) {
       if (!value) return '-';
-      if (value >= 1e12) return `$${(value / 1e12).toFixed(1)}T`;
-      if (value >= 1e9) return `$${(value / 1e9).toFixed(0)}B`;
+      if (value >= 1e12) return `$${(value / 1e12).toFixed(2)}T`;
+      if (value >= 1e9) return `$${(value / 1e9).toFixed(1)}B`;
       if (value >= 1e6) return `$${(value / 1e6).toFixed(0)}M`;
       return `$${value}`;
     }
@@ -1041,7 +1005,6 @@ async function fetchUSPriceWithChart(symbol) {
       `;
     }
 
-    /* 메모 첫 줄만 추출 */
     function getFirstLine(text) {
       if (!text) return '';
       const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
@@ -1054,7 +1017,6 @@ async function fetchUSPriceWithChart(symbol) {
           (item.tags.length > 3 ? `<span class="tag-empty">+${item.tags.length - 3}</span>` : '')
         : '<span class="tag-empty">태그 없음</span>';
 
-      // 메모 첫 줄만 카드에 표시
       const memoLine = getFirstLine(item.memo);
       const memoHtml = memoLine
         ? `<div class="card-memo" title="${item.memo.replace(/"/g, '&quot;')}"><span class="memo-icon">📝</span>${memoLine}</div>`
@@ -1079,9 +1041,7 @@ async function fetchUSPriceWithChart(symbol) {
           <div class="card-chart" id="chart-${idx}"></div>
 
           <div class="card-bottom">
-            <div class="card-meta" id="meta-${idx}">
-              <span>-</span>
-            </div>
+            <div class="card-meta" id="meta-${idx}"><span>-</span></div>
             <div class="card-tags">${tagsHtml}</div>
             ${memoHtml}
           </div>
@@ -1203,7 +1163,7 @@ async function fetchUSPriceWithChart(symbol) {
         chartEl.innerHTML = renderMiniChart(data.prices, isUp);
         metaEl.innerHTML = `<span>시총 ${formatMarketCap(data.marketCap)}</span>`;
 
-        await sleep(200);
+        await sleep(100);  // 본인 프록시는 더 빠르게 가능
       }
     }
 
@@ -1442,7 +1402,7 @@ async function fetchUSPriceWithChart(symbol) {
       });
     }
 
-    /* 뉴스 */
+    /* 뉴스 (rss2json은 자체 CORS 지원하니까 그대로) */
     let newsData = [];
 
     function isJunkNews(headline) {
@@ -1465,19 +1425,11 @@ async function fetchUSPriceWithChart(symbol) {
       watchlist.forEach(item => {
         const ticker = item.symbol.split(':')[1];
 
-        sources.push({
-          query: item.name,
-          ticker: ticker,
-          icon: '📊'
-        });
+        sources.push({ query: item.name, ticker: ticker, icon: '📊' });
 
         const koreanNames = getKoreanNames(ticker);
         koreanNames.forEach(koreanName => {
-          sources.push({
-            query: koreanName,
-            ticker: ticker,
-            icon: '📊'
-          });
+          sources.push({ query: koreanName, ticker: ticker, icon: '📊' });
         });
       });
 
