@@ -138,7 +138,7 @@
     .main-header {
       display: flex; align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
     .main-title {
       font-size: 16px; font-weight: 600;
@@ -152,6 +152,53 @@
       cursor: pointer; font-weight: 500;
     }
     .btn-primary:hover { background: #3a5d9a; }
+
+    /* 태그 필터 바 */
+    .tag-filter-bar {
+      background: #22252c;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .filter-label {
+      font-size: 10px;
+      color: #6a6a6a;
+      margin-right: 4px;
+      font-weight: 500;
+    }
+    .filter-btn {
+      font-size: 12px;
+      padding: 5px 12px;
+      background: #2a2d34;
+      color: #b0b0b0;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .filter-btn:hover {
+      background: #3a3d44;
+      color: #e0e0e0;
+    }
+    .filter-btn.active {
+      background: #2a4d8a;
+      color: #fff;
+      font-weight: 500;
+    }
+    .filter-btn.no-tag {
+      opacity: 0.7;
+      font-style: italic;
+    }
+    .filter-btn .count {
+      opacity: 0.7;
+      margin-left: 2px;
+    }
 
     .stocks-grid {
       display: grid;
@@ -277,6 +324,20 @@
       color: #6a6a6a;
       font-style: italic;
       padding: 1px 2px;
+    }
+
+    /* 결과 없음 메시지 */
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px 20px;
+      color: #6a6a6a;
+      font-size: 13px;
+    }
+    .no-results .small {
+      font-size: 11px;
+      color: #6a6a6a;
+      margin-top: 6px;
     }
 
     .sidebar { display: flex; flex-direction: column; gap: 12px; }
@@ -526,6 +587,12 @@
           </div>
         </div>
 
+        <!-- 태그 필터 바 (자동 생성) -->
+        <div class="tag-filter-bar" id="tag-filter-bar">
+          <span class="filter-label">필터:</span>
+          <!-- 동적으로 채워짐 -->
+        </div>
+
         <div class="stocks-grid" id="stocks-grid"></div>
       </div>
 
@@ -743,6 +810,87 @@
     let watchlist = loadWatchlist();
     saveWatchlist(watchlist);
 
+    /* 현재 활성 필터 */
+    let currentFilter = 'all';
+
+    /* 모든 태그 수집 (중복 제거 + 카운트) */
+    function collectAllTags() {
+      const tagCounts = {};
+      let noTagCount = 0;
+
+      watchlist.forEach(item => {
+        if (!item.tags || item.tags.length === 0) {
+          noTagCount++;
+        } else {
+          item.tags.forEach(tag => {
+            tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+          });
+        }
+      });
+
+      // 종목 수 많은 태그부터 정렬
+      const sortedTags = Object.entries(tagCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([tag, count]) => ({ tag, count }));
+
+      return { tags: sortedTags, noTagCount };
+    }
+
+    /* 필터 바 렌더링 */
+    function renderFilterBar() {
+      const { tags, noTagCount } = collectAllTags();
+      const container = document.getElementById('tag-filter-bar');
+
+      let html = '<span class="filter-label">필터:</span>';
+
+      // 전체 버튼
+      html += `<button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" data-filter="all">
+        전체 <span class="count">(${watchlist.length})</span>
+      </button>`;
+
+      // 각 태그 버튼
+      tags.forEach(({ tag, count }) => {
+        const isActive = currentFilter === tag;
+        html += `<button class="filter-btn ${isActive ? 'active' : ''}" data-filter="${tag}">
+          ${tag} <span class="count">(${count})</span>
+        </button>`;
+      });
+
+      // "태그 없음" 버튼 (해당 종목이 있을 때만)
+      if (noTagCount > 0) {
+        const isActive = currentFilter === '__no_tag__';
+        html += `<button class="filter-btn no-tag ${isActive ? 'active' : ''}" data-filter="__no_tag__">
+          태그 없음 <span class="count">(${noTagCount})</span>
+        </button>`;
+      }
+
+      container.innerHTML = html;
+
+      // 필터 버튼 클릭 이벤트
+      container.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentFilter = btn.dataset.filter;
+          renderFilterBar();   // 활성 상태 업데이트
+          renderWatchlist();   // 카드 다시 렌더
+        });
+      });
+    }
+
+    /* 필터 적용된 종목 리스트 */
+    function getFilteredWatchlist() {
+      if (currentFilter === 'all') {
+        return watchlist.map((item, idx) => ({ item, idx }));
+      }
+      if (currentFilter === '__no_tag__') {
+        return watchlist
+          .map((item, idx) => ({ item, idx }))
+          .filter(({ item }) => !item.tags || item.tags.length === 0);
+      }
+      return watchlist
+        .map((item, idx) => ({ item, idx }))
+        .filter(({ item }) => item.tags && item.tags.includes(currentFilter));
+    }
+
     async function fetchUSPriceWithChart(symbol) {
       const ticker = symbol.split(':')[1];
       const apiUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d&includePrePost=true`;
@@ -865,13 +1013,20 @@
       document.getElementById('stock-count').textContent = watchlist.length;
 
       if (watchlist.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #6a6a6a;">관심 종목이 없습니다.<br>"+ 종목 추가" 버튼을 눌러주세요.</div>';
+        container.innerHTML = '<div class="no-results">관심 종목이 없습니다.<br><span class="small">"+ 종목 추가" 버튼을 눌러주세요.</span></div>';
         return;
       }
 
-      container.innerHTML = watchlist.map((item, idx) => renderStockCard(item, idx)).join('');
+      const filtered = getFilteredWatchlist();
 
-      // 카드 클릭 → 상세 페이지로 이동 (변경!)
+      if (filtered.length === 0) {
+        const filterText = currentFilter === '__no_tag__' ? '태그 없는 종목' : `"${currentFilter}"`;
+        container.innerHTML = `<div class="no-results">${filterText} 종목이 없습니다.<br><span class="small">다른 필터를 선택하거나 카드 ✏️ 버튼으로 태그를 추가하세요.</span></div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(({ item, idx }) => renderStockCard(item, idx)).join('');
+
       container.querySelectorAll('.stock-card').forEach(card => {
         card.addEventListener('click', (e) => {
           if (e.target.closest('button')) return;
@@ -896,6 +1051,7 @@
           if (confirm(`${watchlist[idx].name} 삭제하시겠어요?`)) {
             watchlist.splice(idx, 1);
             saveWatchlist(watchlist);
+            renderFilterBar();
             renderWatchlist();
             loadAllUSPrices();
           }
@@ -906,8 +1062,10 @@
     function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
     async function loadAllUSPrices() {
-      for (let idx = 0; idx < watchlist.length; idx++) {
-        const item = watchlist[idx];
+      // 필터링된 종목만 가격 로드 (성능 최적화)
+      const visible = getFilteredWatchlist();
+
+      for (const { item, idx } of visible) {
         const priceEl = document.getElementById(`price-${idx}`);
         const changesEl = document.getElementById(`changes-${idx}`);
         const chartEl = document.getElementById(`chart-${idx}`);
@@ -1087,6 +1245,7 @@
 
         saveWatchlist(watchlist);
         closeModal();
+        renderFilterBar();   // 새 태그 반영
         renderWatchlist();
         loadAllUSPrices();
       });
@@ -1114,7 +1273,10 @@
         try { return JSON.parse(saved); }
         catch (e) { console.error('이벤트 로드 실패:', e); }
       }
-      return [...DEFAULT_EVENTS];
+      // 기본값을 즉시 저장 (다음번부터 localStorage에서 읽음)
+      const defaults = [...DEFAULT_EVENTS];
+      localStorage.setItem('myEvents', JSON.stringify(defaults));
+      return defaults;
     }
 
     function saveEvents(list) {
@@ -1324,6 +1486,7 @@
     setInterval(loadNews, 10 * 60 * 1000);
 
     renderTimeAndMarket();
+    renderFilterBar();
     renderWatchlist();
     renderEvents();
     setupModal();
