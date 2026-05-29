@@ -86,9 +86,7 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .nav-links {
-      display: flex; gap: 6px;
-    }
+    .nav-links { display: flex; gap: 6px; }
     .nav-link {
       padding: 6px 12px; border-radius: 8px;
       font-size: 12px; color: #b0b0b0;
@@ -123,7 +121,6 @@
       grid-template-columns: 3fr 1fr;
       gap: 12px;
     }
-
     @media (max-width: 1100px) {
       .main-grid { grid-template-columns: 1fr; }
     }
@@ -153,7 +150,6 @@
     }
     .btn-primary:hover { background: #3a5d9a; }
 
-    /* 태그 필터 바 */
     .tag-filter-bar {
       background: #22252c;
       border-radius: 8px;
@@ -326,7 +322,6 @@
       padding: 1px 2px;
     }
 
-    /* 결과 없음 메시지 */
     .no-results {
       grid-column: 1 / -1;
       text-align: center;
@@ -359,7 +354,7 @@
     }
     .add-btn-small:hover { background: #3a5d9a; }
 
-    .news-list-sidebar { max-height: 400px; overflow-y: auto; }
+    .news-list-sidebar { max-height: 600px; overflow-y: auto; }
     .news-item-mini {
       padding: 6px 0;
       border-bottom: 1px solid #2a2d34;
@@ -370,12 +365,24 @@
     .news-mini-time {
       font-size: 10px; color: #6a6a6a;
       margin-bottom: 2px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .news-ticker {
+      padding: 1px 5px;
+      background: #1a2d40;
+      color: #6da3e8;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 600;
+    }
+    .news-ticker.macro {
+      background: #2d1d40;
+      color: #b794f4;
     }
     .news-mini-headline {
       font-size: 11px; color: #c0c0c0;
       line-height: 1.4;
     }
-    .news-mini-icon { margin-right: 4px; }
 
     .calendar-item {
       padding: 6px 0; font-size: 12px;
@@ -587,10 +594,8 @@
           </div>
         </div>
 
-        <!-- 태그 필터 바 (자동 생성) -->
         <div class="tag-filter-bar" id="tag-filter-bar">
           <span class="filter-label">필터:</span>
-          <!-- 동적으로 채워짐 -->
         </div>
 
         <div class="stocks-grid" id="stocks-grid"></div>
@@ -600,7 +605,7 @@
 
         <div class="sidebar-box">
           <div class="sidebar-title">
-            <span>📰 최신 뉴스</span>
+            <span>📰 관심 종목 뉴스</span>
             <span id="news-count" style="font-size: 11px; color: #8a8a8a; font-weight: 400;"></span>
           </div>
           <div class="news-list-sidebar" id="news-list"></div>
@@ -675,6 +680,48 @@
   </div>
 
   <script>
+    /* ============================================
+       한글명 사전 (티커 → 한글 회사명)
+       ============================================ */
+    const KOREAN_NAMES = {
+      'NVDA': ['엔비디아'],
+      'MSFT': ['마이크로소프트'],
+      'GOOGL': ['알파벳', '구글'],
+      'GOOG': ['알파벳', '구글'],
+      'META': ['메타'],
+      'AMZN': ['아마존'],
+      'AAPL': ['애플'],
+      'TSLA': ['테슬라'],
+      'GEV': ['GE 버노바', 'GE 베르노바'],
+      'ETN': ['이튼'],
+      'TSM': ['TSMC', '대만 반도체'],
+      'MU': ['마이크론'],
+      'DELL': ['델 테크놀로지스'],
+      'PWR': ['콴타'],
+      'AVGO': ['브로드컴'],
+      'AMD': ['AMD'],
+      'PLTR': ['팔란티어'],
+      'COHR': ['코히어런트'],
+      'LRCX': ['램리서치'],
+      'KLAC': ['KLA'],
+      'AMAT': ['어플라이드 머티리얼즈'],
+      'VRT': ['버티브'],
+      'CRWD': ['크라우드스트라이크'],
+      'ORCL': ['오라클'],
+      'IBM': ['IBM'],
+      'INTC': ['인텔'],
+      'NFLX': ['넷플릭스'],
+      'DIS': ['디즈니'],
+      'JPM': ['JP모건'],
+      'BAC': ['뱅크오브아메리카'],
+      'XOM': ['엑손모빌'],
+      'CCJ': ['카메코']
+    };
+
+    function getKoreanNames(ticker) {
+      return KOREAN_NAMES[ticker] || [];
+    }
+
     /* 미국 시간 + 장 상태 */
     function getUSEasternTime() {
       const now = new Date();
@@ -813,7 +860,6 @@
     /* 현재 활성 필터 */
     let currentFilter = 'all';
 
-    /* 모든 태그 수집 (중복 제거 + 카운트) */
     function collectAllTags() {
       const tagCounts = {};
       let noTagCount = 0;
@@ -828,7 +874,6 @@
         }
       });
 
-      // 종목 수 많은 태그부터 정렬
       const sortedTags = Object.entries(tagCounts)
         .sort((a, b) => b[1] - a[1])
         .map(([tag, count]) => ({ tag, count }));
@@ -836,19 +881,16 @@
       return { tags: sortedTags, noTagCount };
     }
 
-    /* 필터 바 렌더링 */
     function renderFilterBar() {
       const { tags, noTagCount } = collectAllTags();
       const container = document.getElementById('tag-filter-bar');
 
       let html = '<span class="filter-label">필터:</span>';
 
-      // 전체 버튼
       html += `<button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" data-filter="all">
         전체 <span class="count">(${watchlist.length})</span>
       </button>`;
 
-      // 각 태그 버튼
       tags.forEach(({ tag, count }) => {
         const isActive = currentFilter === tag;
         html += `<button class="filter-btn ${isActive ? 'active' : ''}" data-filter="${tag}">
@@ -856,7 +898,6 @@
         </button>`;
       });
 
-      // "태그 없음" 버튼 (해당 종목이 있을 때만)
       if (noTagCount > 0) {
         const isActive = currentFilter === '__no_tag__';
         html += `<button class="filter-btn no-tag ${isActive ? 'active' : ''}" data-filter="__no_tag__">
@@ -866,17 +907,15 @@
 
       container.innerHTML = html;
 
-      // 필터 버튼 클릭 이벤트
       container.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           currentFilter = btn.dataset.filter;
-          renderFilterBar();   // 활성 상태 업데이트
-          renderWatchlist();   // 카드 다시 렌더
+          renderFilterBar();
+          renderWatchlist();
         });
       });
     }
 
-    /* 필터 적용된 종목 리스트 */
     function getFilteredWatchlist() {
       if (currentFilter === 'all') {
         return watchlist.map((item, idx) => ({ item, idx }));
@@ -1054,6 +1093,7 @@
             renderFilterBar();
             renderWatchlist();
             loadAllUSPrices();
+            loadNews();  // 종목 삭제 시 뉴스도 갱신
           }
         });
       });
@@ -1062,7 +1102,6 @@
     function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
     async function loadAllUSPrices() {
-      // 필터링된 종목만 가격 로드 (성능 최적화)
       const visible = getFilteredWatchlist();
 
       for (const { item, idx } of visible) {
@@ -1182,17 +1221,16 @@
     }
 
     function addTag(text) {
-  if (!text) return;
-  // 콤마로 분리해서 여러 태그를 한 번에 추가 가능
-  const parts = text.split(',');
-  parts.forEach(part => {
-    const trimmed = part.trim();
-    if (!trimmed) return;
-    if (currentTags.includes(trimmed)) return;
-    currentTags.push(trimmed);
-  });
-  renderTagsInModal();
-}
+      if (!text) return;
+      const parts = text.split(',');
+      parts.forEach(part => {
+        const trimmed = part.trim();
+        if (!trimmed) return;
+        if (currentTags.includes(trimmed)) return;
+        currentTags.push(trimmed);
+      });
+      renderTagsInModal();
+    }
 
     function setupModal() {
       const tagInput = document.getElementById('tag-input');
@@ -1250,9 +1288,10 @@
 
         saveWatchlist(watchlist);
         closeModal();
-        renderFilterBar();   // 새 태그 반영
+        renderFilterBar();
         renderWatchlist();
         loadAllUSPrices();
+        loadNews();  // 종목 추가/편집 시 뉴스도 갱신
       });
 
       cancelBtn.addEventListener('click', closeModal);
@@ -1278,7 +1317,6 @@
         try { return JSON.parse(saved); }
         catch (e) { console.error('이벤트 로드 실패:', e); }
       }
-      // 기본값을 즉시 저장 (다음번부터 localStorage에서 읽음)
       const defaults = [...DEFAULT_EVENTS];
       localStorage.setItem('myEvents', JSON.stringify(defaults));
       return defaults;
@@ -1358,7 +1396,9 @@
       });
     }
 
-    /* 뉴스 */
+    /* ============================================
+       뉴스 - 관심 종목 기반 동적 생성
+       ============================================ */
     let newsData = [];
 
     function isJunkNews(headline) {
@@ -1375,22 +1415,41 @@
       return false;
     }
 
-    const RSS_SOURCES = [
-      { url: 'https://news.google.com/rss/search?q=SK하이닉스&hl=ko', icon: '📄' },
-      { url: 'https://news.google.com/rss/search?q=삼성전자+HBM&hl=ko', icon: '📄' },
-      { url: 'https://news.google.com/rss/search?q=마이크론&hl=ko', icon: '📄' },
-      { url: 'https://news.google.com/rss/search?q=LS일렉트릭&hl=ko', icon: '📄' },
-      { url: 'https://news.google.com/rss/search?q=HD현대일렉트릭&hl=ko', icon: '📄' },
-      { url: 'https://news.google.com/rss/search?q=효성중공업&hl=ko', icon: '📄' },
-      { url: 'https://news.google.com/rss/search?q=두산에너빌리티&hl=ko', icon: '📄' },
-      { url: 'https://news.google.com/rss/search?q=NVIDIA+AI&hl=ko', icon: '📄' },
-      { url: 'https://news.google.com/rss/search?q=Microsoft+capex&hl=ko', icon: '📄' },
-      { url: 'https://news.google.com/rss/search?q=AI+데이터센터&hl=ko', icon: '📄' },
-      { url: 'https://news.google.com/rss/search?q=TSMC+CoWoS&hl=ko', icon: '📄' },
-      { url: 'https://news.google.com/rss/search?q=연준+금리&hl=ko', icon: '🏛️' }
-    ];
+    /* 관심 종목 기반 RSS 소스 자동 생성 */
+    function buildRSSSourcesFromWatchlist() {
+      const sources = [];
 
-    async function fetchFromRSS(rssUrl, defaultIcon) {
+      watchlist.forEach(item => {
+        const ticker = item.symbol.split(':')[1];
+
+        // 영문명 검색 (예: "NVIDIA")
+        sources.push({
+          query: item.name,
+          ticker: ticker,
+          icon: '📊'
+        });
+
+        // 한글명 검색 (사전에 있으면)
+        const koreanNames = getKoreanNames(ticker);
+        koreanNames.forEach(koreanName => {
+          sources.push({
+            query: koreanName,
+            ticker: ticker,
+            icon: '📊'
+          });
+        });
+      });
+
+      // 매크로 보조 (고정 3개)
+      sources.push({ query: '연준 금리', ticker: 'MACRO', icon: '🏛️' });
+      sources.push({ query: '미국 증시 마감', ticker: 'MACRO', icon: '🏛️' });
+      sources.push({ query: '빅테크 실적', ticker: 'MACRO', icon: '🏛️' });
+
+      return sources;
+    }
+
+    async function fetchFromRSS(source) {
+      const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(source.query)}&hl=ko`;
       const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
       try {
         const response = await fetch(apiUrl);
@@ -1398,10 +1457,11 @@
         if (data.status !== 'ok') return [];
         return data.items
           .filter(item => !isJunkNews(item.title))
-          .slice(0, 5)
+          .slice(0, 3)  // 종목당 3건
           .map(item => ({
             time: formatRSSTime(item.pubDate),
-            icon: defaultIcon,
+            icon: source.icon,
+            ticker: source.ticker,
             headline: item.title,
             link: item.link
           }));
@@ -1438,20 +1498,32 @@
         return;
       }
 
-      const top20 = newsData.slice(0, 20);
-      container.innerHTML = top20.map(news => `
-        <div class="news-item-mini" onclick="window.open('${news.link}', '_blank')">
-          <div class="news-mini-time">${news.time}</div>
-          <div class="news-mini-headline"><span class="news-mini-icon">${news.icon}</span>${news.headline}</div>
-        </div>
-      `).join('');
+      // 상위 30건 표시
+      const top = newsData.slice(0, 30);
+
+      container.innerHTML = top.map(news => {
+        const tickerClass = news.ticker === 'MACRO' ? 'news-ticker macro' : 'news-ticker';
+        return `
+          <div class="news-item-mini" onclick="window.open('${news.link}', '_blank')">
+            <div class="news-mini-time">
+              <span class="${tickerClass}">${news.ticker}</span>
+              ${news.time}
+            </div>
+            <div class="news-mini-headline">${news.headline}</div>
+          </div>
+        `;
+      }).join('');
     }
 
     async function loadNews() {
       try {
+        const sources = buildRSSSourcesFromWatchlist();
+        console.log(`뉴스 로딩 - ${sources.length}개 소스`);
+
         const allRssNews = await Promise.all(
-          RSS_SOURCES.map(source => fetchFromRSS(source.url, source.icon))
+          sources.map(source => fetchFromRSS(source))
         );
+
         const flatRssNews = allRssNews.flat();
         const seen = new Set();
         const uniqueRssNews = flatRssNews.filter(item => {
@@ -1459,6 +1531,7 @@
           seen.add(item.headline);
           return true;
         });
+
         newsData = uniqueRssNews;
         newsData.sort((a, b) => getTimestamp(b.time) - getTimestamp(a.time));
         renderNews();
