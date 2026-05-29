@@ -744,13 +744,19 @@
        관련 이벤트 - 메인 이벤트에서 자동 매칭
        ============================================ */
     function loadEvents() {
-      const saved = localStorage.getItem('myEvents');
-      if (saved) {
-        try { return JSON.parse(saved); }
-        catch (e) { return []; }
-      }
-      return [];
-    }
+  const saved = localStorage.getItem('myEvents');
+  if (saved) {
+    try { return JSON.parse(saved); }
+    catch (e) { return []; }
+  }
+  // 저장된 이벤트 없으면 메인 페이지와 동일한 기본 이벤트 사용
+  return [
+    { date: "5/27 (화)", event: "엔비디아 1Q26 실적" },
+    { date: "6/4 (수)", event: "FOMC 금리 결정" },
+    { date: "7/22-25", event: "빅테크 2Q 실적 시작" },
+    { date: "8월 중", event: "잭슨홀 미팅" }
+  ];
+}
 
     function calculateDday(dateStr) {
       // "5/27 (화)" 같은 형식에서 날짜 추출
