@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>종목 상세 - My Stock Feed</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0f1115;
+      color: #e8e8e8;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .layout { max-width: 1800px; margin: 0 auto; }
+
+    /* 상단 네비게이션 */
+    .top-nav {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; background: #1a1d24;
+      border-radius: 12px; border: 1px solid #2a2d34;
+      margin-bottom: 8px;
+    }
+    .back-link {
+      color: #6da3e8;
+      font-size: 13px;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #2a2d34;
+      transition: all 0.2s;
+    }
+    .back-link:hover {
+      background: #3a3d44;
+      color: #fff;
+    }
+    .top-spacer { flex: 1; }
+
+    .time-boxes {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .time-box {
+      background: #22252c;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 11px;
+      min-width: 100px;
+    }
+    .time-label {
+      color: #6a6a6a;
+      font-size: 9px;
+      margin-bottom: 1px;
+    }
+    .time-value {
+      color: #e0e0e0;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+    .market-box {
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 11px;
+      min-width: 110px;
+    }
+    .market-box.regular { background: #1f4d3a; color: #6dd49e; }
+    .market-box.pre { background: #1a3050; color: #6da3e8; }
+    .market-box.post { background: #2d1d40; color: #b794f4; }
+    .market-box.closed { background: #2a2d34; color: #8a8a8a; }
+    .market-status-label {
+      font-size: 9px;
+      opacity: 0.8;
+      margin-bottom: 1px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .status-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: currentColor;
+    }
+    .market-box.regular .status-dot { animation: pulse 2s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* 종목 헤더 - 가격 표시 */
+    .stock-header {
+      background: #1a1d24;
+      border: 1px solid #2a2d34;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+    }
+    .stock-header-top {
+      display: flex; align-items: baseline;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .stock-symbol-big {
+      font-size: 28px;
+      font-weight: 600;
+      color: #e0e0e0;
+    }
+    .stock-name-big {
+      font-size: 14px;
+      color: #8a8a8a;
+    }
+    .stock-tags {
+      margin-left: auto;
+      display: flex; gap: 4px; flex-wrap: wrap;
+    }
+    .stock-tag {
+      font-size: 10px;
+      padding: 3px 10px;
+      background: #1a2d40;
+      color: #6da3e8;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+    .stock-price-row {
+      display: flex; align-items: baseline;
+      gap: 16px; margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .stock-price-big {
+      font-size: 32px;
+      font-weight: 600;
+    }
+    .stock-change-big {
+      font-size: 16px;
+    }
+    .stock-after-hours-big {
+      font-size: 12px;
+      color: #8a8a8a;
+      display: flex; gap: 6px; align-items: center;
+    }
+    .after-hours-tag {
+      padding: 2px 8px;
+      background: #2a3d5c;
+      color: #6da3e8;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 10px;
+    }
+    .price-up { color: #6dd49e; }
+    .price-down { color: #e88a8a; }
+    .price-flat { color: #c0c0c0; }
+
+    /* 메인 그리드: 차트 + 정보 */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 1100px) {
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: #1a1d24;
+      border: 1px solid #2a2d34;
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .panel-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f0f0f0;
+      margin-bottom: 10px;
+    }
+
+    /* TradingView 차트 컨테이너 */
+    .chart-container {
+      height: 480px;
+      background: #0f1115;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .tradingview-widget-container {
+      height: 100%;
+      width: 100%;
+    }
+
+    /* 우측 정보 패널 */
+    .info-stack {
+      display: flex; flex-direction: column;
+      gap: 12px;
+    }
+
+    /* 기본 정보 그리드 */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .info-item {
+      background: #22252c;
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+    .info-label {
+      font-size: 10px;
+      color: #6a6a6a;
+      margin-bottom: 2px;
+    }
+    .info-value {
+      font-size: 13px;
+      color: #e0e0e0;
+      font-weight: 500;
+    }
+    .info-value.small {
+      font-size: 11px;
+    }
+
+    /* 실적 이벤트 박스 */
+    .earning-item {
+      background: #22252c;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+    }
+    .earning-item:last-child { margin-bottom: 0; }
+    .earning-date {
+      color: #6da3e8;
+      font-weight: 500;
+      font-size: 11px;
+    }
+    .earning-name {
+      color: #e0e0e0;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    .earning-dday {
+      font-size: 10px;
+      color: #6dd49e;
+      font-weight: 500;
+      margin-top: 3px;
+    }
+    .earning-dday.urgent {
+      color: #e88a8a;
+    }
+
+    /* 뉴스 섹션 */
+    .news-section {
+      background: #1a1d24;
+      border: 1px solid #2a2d34;
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .news-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f0f0f0;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .news-count-badge {
+      font-size: 11px;
+      color: #6a6a6a;
+      font-weight: 400;
+    }
+    .news-keywords {
+      font-size: 10px;
+      color: #6a6a6a;
+      margin-bottom: 8px;
+    }
+    .news-keyword-chip {
+      display: inline-block;
+      padding: 1px 6px;
+      background: #22252c;
+      border-radius: 6px;
+      margin-right: 3px;
+      color: #b0b0b0;
+    }
+    .news-item-large {
+      display: flex; gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #2a2d34;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .news-item-large:hover {
+      background: #22252c;
+      margin: 0 -16px;
+      padding: 10px 16px;
+    }
+    .news-item-large:last-child { border-bottom: none; }
+    .news-icon {
+      font-size: 14px;
+      flex-shrink: 0;
+      width: 20px;
+    }
+    .news-content {
+      flex: 1; min-width: 0;
+    }
+    .news-time {
+      color: #8a8a8a;
+      font-size: 11px;
+      margin-bottom: 2px;
+    }
+    .news-headline {
+      color: #d0d0d0;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6a6a6a;
+      font-size: 12px;
+    }
+
+    .loading-msg {
+      text-align: center;
+      padding: 20px;
+      color: #6a6a6a;
+      font-size: 12px;
+      font-style: italic;
+    }
+
+    .footer {
+      background: #1a1d24;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #2a2d34;
+      margin-top: 12px;
+      text-align: center;
+      font-size: 12px;
+      color: #6a6a6a;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+
+    <!-- 상단 네비 + 시간 -->
+    <div class="top-nav">
+      <a href="index.html" class="back-link">← 포트폴리오로</a>
+      <div class="top-spacer"></div>
+      <div class="time-boxes">
+        <div class="time-box">
+          <div class="time-label">🇺🇸 미국 동부</div>
+          <div class="time-value" id="us-time">--:--</div>
+        </div>
+        <div class="time-box">
+          <div class="time-label">🇰🇷 한국</div>
+          <div class="time-value" id="kr-time">--:--</div>
+        </div>
+        <div class="market-box closed" id="market-box">
+          <div class="market-status-label">
+            <span class="status-dot"></span>
+            <span id="market-name">확인 중...</span>
+          </div>
+          <div id="market-remaining" style="font-weight: 500;">--:--</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 종목 헤더 (가격) -->
+    <div class="stock-header" id="stock-header">
+      <div class="loading-msg">종목 정보 로딩 중...</div>
+    </div>
+
+    <!-- 메인 그리드: 차트 + 정보 -->
+    <div class="detail-grid">
+
+      <!-- 왼쪽: 차트 -->
+      <div class="panel">
+        <div class="panel-title">📈 차트</div>
+        <div class="chart-container" id="chart-container">
+          <div class="loading-msg">차트 로딩 중...</div>
+        </div>
+      </div>
+
+      <!-- 오른쪽: 정보 + 실적 -->
+      <div class="info-stack">
+
+        <!-- 기본 정보 -->
+        <div class="panel">
+          <div class="panel-title">📋 기본 정보</div>
+          <div class="info-grid" id="info-grid">
+            <div class="loading-msg" style="grid-column: 1 / -1;">로딩 중...</div>
+          </div>
+        </div>
+
+        <!-- 다가오는 실적/이벤트 -->
+        <div class="panel">
+          <div class="panel-title">📅 관련 이벤트</div>
+          <div id="earnings-list">
+            <div class="loading-msg">이벤트 검색 중...</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 뉴스 -->
+    <div class="news-section">
+      <div class="news-section-title">
+        <span>📰 관련 뉴스</span>
+        <span class="news-count-badge" id="news-count-badge">검색 중...</span>
+      </div>
+      <div class="news-keywords" id="news-keywords"></div>
+      <div id="news-list">
+        <div class="loading-msg">뉴스 검색 중...</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      마지막 업데이트: <span id="last-update">-</span>
+    </div>
+  </div>
+
+  <!-- TradingView 위젯 스크립트 -->
+  <script src="https://s3.tradingview.com/tv.js"></script>
+
+  <script>
+    /* ============================================
+       URL에서 ticker 추출
+       ============================================ */
+    function getTickerFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('ticker');
+    }
+
+    const ticker = getTickerFromURL();
+    if (!ticker) {
+      document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#8a8a8a;">종목 코드가 지정되지 않았습니다. <a href="index.html" style="color:#6da3e8;">포트폴리오로 돌아가기</a></div>';
+      throw new Error('No ticker');
+    }
+
+    /* ============================================
+       관심 종목에서 정보 가져오기
+       ============================================ */
+    function loadWatchlist() {
+      const saved = localStorage.getItem('myWatchlist');
+      if (saved) {
+        try { return JSON.parse(saved); }
+        catch (e) { return []; }
+      }
+      return [];
+    }
+
+    const watchlist = loadWatchlist();
+    const stockItem = watchlist.find(item =>
+      item.symbol.split(':')[1] === ticker ||
+      item.symbol === ticker
+    );
+
+    if (!stockItem) {
+      document.body.innerHTML = `<div style="padding:40px;text-align:center;color:#8a8a8a;">관심 종목에 없는 종목입니다: ${ticker}<br><a href="index.html" style="color:#6da3e8;">포트폴리오로 돌아가기</a></div>`;
+      throw new Error('Stock not found');
+    }
+
+    document.title = `${ticker} - ${stockItem.name} | My Stock Feed`;
+
+    /* ============================================
+       시간 + 장 상태 (index.html과 동일)
+       ============================================ */
+    function getUSEasternTime() {
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false, timeZoneName: 'short'
+      });
+      const parts = formatter.formatToParts(now);
+      const get = (type) => parts.find(p => p.type === type)?.value;
+      return {
+        year: parseInt(get('year')),
+        month: parseInt(get('month')),
+        day: parseInt(get('day')),
+        hour: parseInt(get('hour')) % 24,
+        minute: parseInt(get('minute')),
+        tzName: get('timeZoneName')
+      };
+    }
+
+    function getKoreaTime() {
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('ko-KR', {
+        timeZone: 'Asia/Seoul',
+        hour: '2-digit', minute: '2-digit', hour12: false
+      });
+      return formatter.format(now);
+    }
+
+    function getMarketStatus() {
+      const us = getUSEasternTime();
+      const usDate = new Date(Date.UTC(us.year, us.month - 1, us.day));
+      const dayOfWeek = usDate.getUTCDay();
+
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        return { status: 'closed', name: '주말 (마감)', remaining: '월요일' };
+      }
+
+      const totalMinutes = us.hour * 60 + us.minute;
+      const preMarketStart = 4 * 60;
+      const regularStart = 9 * 60 + 30;
+      const regularEnd = 16 * 60;
+      const postMarketEnd = 20 * 60;
+
+      let status, name, endMinutes;
+      if (totalMinutes < preMarketStart) {
+        status = 'closed'; name = '장 마감'; endMinutes = preMarketStart;
+      } else if (totalMinutes < regularStart) {
+        status = 'pre'; name = '프리장'; endMinutes = regularStart;
+      } else if (totalMinutes < regularEnd) {
+        status = 'regular'; name = '정규장'; endMinutes = regularEnd;
+      } else if (totalMinutes < postMarketEnd) {
+        status = 'post'; name = '시간외'; endMinutes = postMarketEnd;
+      } else {
+        status = 'closed'; name = '장 마감';
+        endMinutes = (24 * 60) + preMarketStart;
+      }
+
+      const remainingMinutes = endMinutes - totalMinutes;
+      const hours = Math.floor(remainingMinutes / 60);
+      const minutes = remainingMinutes % 60;
+      let remaining;
+      if (status === 'closed' && remainingMinutes >= 8 * 60) {
+        remaining = '다음 장 대기';
+      } else {
+        remaining = `${hours}:${String(minutes).padStart(2, '0')} 남음`;
+      }
+      return { status, name, remaining, tzName: us.tzName };
+    }
+
+    function renderTimeAndMarket() {
+      const us = getUSEasternTime();
+      const krTime = getKoreaTime();
+      const market = getMarketStatus();
+
+      const usHour = String(us.hour).padStart(2, '0');
+      const usMin = String(us.minute).padStart(2, '0');
+      document.getElementById('us-time').textContent = `${usHour}:${usMin} ${us.tzName}`;
+      document.getElementById('kr-time').textContent = krTime;
+
+      const box = document.getElementById('market-box');
+      box.className = `market-box ${market.status}`;
+      document.getElementById('market-name').textContent = market.name;
+      document.getElementById('market-remaining').textContent = market.remaining;
+    }
+
+    /* ============================================
+       가격 + 시총 + P/E + 52주 정보 가져오기
+       ============================================ */
+    async function fetchStockDetails(symbol) {
+      const tickerOnly = symbol.split(':')[1];
+      const apiUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${tickerOnly}?interval=1d&range=1y&includePrePost=true`;
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+
+      try {
+        const response = await fetch(proxyUrl);
+        const data = await response.json();
+        const yahooData = JSON.parse(data.contents);
+
+        const result = yahooData.chart?.result?.[0];
+        if (!result) return null;
+
+        const meta = result.meta;
+        const prices = result.indicators?.quote?.[0]?.close || [];
+        const cleanPrices = prices.filter(p => p !== null && p !== undefined);
+
+        const currentPrice = meta.regularMarketPrice;
+        const previousClose = meta.previousClose || meta.chartPreviousClose;
+        const dayChange = currentPrice - previousClose;
+        const dayChangePercent = (dayChange / previousClose) * 100;
+
+        // 52주 최고/최저
+        const yearHigh = cleanPrices.length > 0 ? Math.max(...cleanPrices, currentPrice) : currentPrice;
+        const yearLow = cleanPrices.length > 0 ? Math.min(...cleanPrices, currentPrice) : currentPrice;
+
+        // 시간외
+        let postMarketPrice = null;
+        let postMarketChangePercent = null;
+        if (meta.postMarketPrice && meta.postMarketPrice !== currentPrice) {
+          postMarketPrice = meta.postMarketPrice;
+          const postChange = postMarketPrice - currentPrice;
+          postMarketChangePercent = (postChange / currentPrice) * 100;
+        }
+
+        return {
+          price: currentPrice,
+          dayChange,
+          dayChangePercent,
+          previousClose,
+          marketCap: meta.marketCap || null,
+          yearHigh,
+          yearLow,
+          volume: meta.regularMarketVolume || null,
+          currency: meta.currency || 'USD',
+          exchange: meta.exchangeName || '',
+          postMarketPrice,
+          postMarketChangePercent
+        };
+      } catch (error) {
+        console.error('상세 정보 가져오기 실패:', error);
+        return null;
+      }
+    }
+
+    function formatNumber(value) {
+      if (!value) return '-';
+      if (value >= 1e12) return `$${(value / 1e12).toFixed(2)}T`;
+      if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
+      if (value >= 1e6) return `$${(value / 1e6).toFixed(0)}M`;
+      if (value >= 1e3) return `${(value / 1e3).toFixed(0)}K`;
+      return value.toString();
+    }
+
+    function formatVolume(value) {
+      if (!value) return '-';
+      if (value >= 1e9) return `${(value / 1e9).toFixed(2)}B`;
+      if (value >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
+      if (value >= 1e3) return `${(value / 1e3).toFixed(0)}K`;
+      return value.toString();
+    }
+
+    async function renderStockHeader() {
+      const data = await fetchStockDetails(stockItem.symbol);
+
+      const tagsHtml = stockItem.tags && stockItem.tags.length > 0
+        ? `<div class="stock-tags">${stockItem.tags.map(t => `<span class="stock-tag">${t}</span>`).join('')}</div>`
+        : '';
+
+      if (!data) {
+        document.getElementById('stock-header').innerHTML = `
+          <div class="stock-header-top">
+            <div class="stock-symbol-big">${ticker}</div>
+            <div class="stock-name-big">${stockItem.name}</div>
+            ${tagsHtml}
+          </div>
+          <div style="margin-top: 12px; color: #6a6a6a;">가격 데이터를 가져올 수 없습니다.</div>
+        `;
+        return;
+      }
+
+      const isUp = data.dayChangePercent >= 0;
+      const colorClass = isUp ? 'price-up' : 'price-down';
+      const sign = isUp ? '+' : '';
+
+      let afterHoursHtml = '';
+      if (data.postMarketPrice !== null) {
+        const pIsUp = data.postMarketChangePercent >= 0;
+        const pColor = pIsUp ? 'price-up' : 'price-down';
+        const pSign = pIsUp ? '+' : '';
+        afterHoursHtml = `
+          <div class="stock-after-hours-big">
+            <span class="after-hours-tag">시간외</span>
+            <span class="${pColor}">$${data.postMarketPrice.toFixed(2)}</span>
+            <span class="${pColor}">${pSign}${data.postMarketChangePercent.toFixed(2)}%</span>
+          </div>
+        `;
+      }
+
+      document.getElementById('stock-header').innerHTML = `
+        <div class="stock-header-top">
+          <div class="stock-symbol-big">${ticker}</div>
+          <div class="stock-name-big">${stockItem.name}</div>
+          ${tagsHtml}
+        </div>
+        <div class="stock-price-row">
+          <span class="stock-price-big ${colorClass}">$${data.price.toFixed(2)}</span>
+          <span class="stock-change-big ${colorClass}">${sign}${data.dayChange.toFixed(2)} (${sign}${data.dayChangePercent.toFixed(2)}%)</span>
+          ${afterHoursHtml}
+        </div>
+      `;
+
+      // 기본 정보 그리드
+      document.getElementById('info-grid').innerHTML = `
+        <div class="info-item">
+          <div class="info-label">시가총액</div>
+          <div class="info-value">${formatNumber(data.marketCap)}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">거래량</div>
+          <div class="info-value">${formatVolume(data.volume)}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">52주 최고</div>
+          <div class="info-value">$${data.yearHigh.toFixed(2)}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">52주 최저</div>
+          <div class="info-value">$${data.yearLow.toFixed(2)}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">전일 종가</div>
+          <div class="info-value">$${data.previousClose.toFixed(2)}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">거래소</div>
+          <div class="info-value small">${data.exchange}</div>
+        </div>
+      `;
+    }
+
+    /* ============================================
+       TradingView 차트
+       ============================================ */
+    function renderTradingViewChart() {
+      const container = document.getElementById('chart-container');
+      container.innerHTML = '<div id="tradingview-widget" class="tradingview-widget-container"></div>';
+
+      // TradingView Widget 생성
+      new TradingView.widget({
+        container_id: 'tradingview-widget',
+        autosize: true,
+        symbol: stockItem.symbol,
+        interval: 'D',
+        timezone: 'America/New_York',
+        theme: 'dark',
+        style: '1',
+        locale: 'kr',
+        toolbar_bg: '#1a1d24',
+        enable_publishing: false,
+        allow_symbol_change: false,
+        hide_side_toolbar: false,
+        studies: [],
+        backgroundColor: '#0f1115',
+        gridColor: 'rgba(42, 45, 52, 0.5)'
+      });
+    }
+
+    /* ============================================
+       관련 이벤트 - 메인 이벤트에서 자동 매칭
+       ============================================ */
+    function loadEvents() {
+      const saved = localStorage.getItem('myEvents');
+      if (saved) {
+        try { return JSON.parse(saved); }
+        catch (e) { return []; }
+      }
+      return [];
+    }
+
+    function calculateDday(dateStr) {
+      // "5/27 (화)" 같은 형식에서 날짜 추출
+      const match = dateStr.match(/(\d+)\/(\d+)/);
+      if (!match) return null;
+
+      const month = parseInt(match[1]);
+      const day = parseInt(match[2]);
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+      const currentDay = now.getDate();
+
+      let year = currentYear;
+      // 지난 달 날짜면 내년으로
+      if (month < currentMonth || (month === currentMonth && day < currentDay)) {
+        year = currentYear + 1;
+      }
+
+      const eventDate = new Date(year, month - 1, day);
+      const today = new Date(currentYear, now.getMonth(), currentDay);
+      const diffMs = eventDate - today;
+      const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffDays < 0) return null;
+      if (diffDays === 0) return 'D-Day';
+      return `D-${diffDays}`;
+    }
+
+    function getMatchKeywords() {
+      // 종목명/티커 + 회사명 + 태그
+      const keywords = new Set();
+      keywords.add(ticker.toLowerCase());
+      keywords.add(stockItem.name.toLowerCase());
+
+      // 회사명에서 단어 추출 (예: "GE Vernova" → "GE", "Vernova")
+      stockItem.name.split(/\s+/).forEach(w => {
+        if (w.length >= 2) keywords.add(w.toLowerCase());
+      });
+
+      // 한글 회사명 매칭 (사전)
+      const koreanNames = {
+        'NVDA': ['엔비디아'],
+        'MSFT': ['마이크로소프트'],
+        'GOOGL': ['알파벳', '구글'],
+        'META': ['메타'],
+        'AMZN': ['아마존'],
+        'AAPL': ['애플'],
+        'GEV': ['GE 버노바', 'GE Vernova'],
+        'ETN': ['이튼'],
+        'TSM': ['TSMC', '대만 반도체'],
+        'MU': ['마이크론'],
+        'PWR': ['콴타'],
+        'AVGO': ['브로드컴'],
+        'AMD': ['AMD']
+      };
+      if (koreanNames[ticker]) {
+        koreanNames[ticker].forEach(name => keywords.add(name.toLowerCase()));
+      }
+
+      // 태그도 추가
+      if (stockItem.tags) {
+        stockItem.tags.forEach(tag => keywords.add(tag.toLowerCase()));
+      }
+
+      return Array.from(keywords);
+    }
+
+    function renderRelatedEvents() {
+      const events = loadEvents();
+      const keywords = getMatchKeywords();
+
+      const matched = events.filter(event => {
+        const text = (event.event + ' ' + event.date).toLowerCase();
+        return keywords.some(kw => text.includes(kw));
+      });
+
+      const container = document.getElementById('earnings-list');
+
+      if (matched.length === 0) {
+        container.innerHTML = `
+          <div style="font-size: 11px; color: #6a6a6a; padding: 10px 0;">
+            매칭된 이벤트 없음.<br>
+            <span style="font-size: 10px;">메인 페이지의 이벤트 중 종목명/태그가 포함된 것이 표시됩니다.</span>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = matched.map(event => {
+        const dday = calculateDday(event.date);
+        const ddayClass = dday && (dday === 'D-Day' || (dday.startsWith('D-') && parseInt(dday.slice(2)) <= 7)) ? 'urgent' : '';
+        return `
+          <div class="earning-item">
+            <div class="earning-date">${event.date}</div>
+            <div class="earning-name">${event.event}</div>
+            ${dday ? `<div class="earning-dday ${ddayClass}">${dday}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ============================================
+       종목별 관련 뉴스 (티커 + 회사명 + 태그)
+       ============================================ */
+    function isJunkNews(headline) {
+      if (!headline || headline.length < 10) return true;
+      const blacklist = [
+        '리딩방', '무료 리딩', '매수 추천', 'TOP 5',
+        '100% 수익', '대박 종목', '특급 정보',
+        '★', '☆', '◆', '◇', '■', '□',
+        'Best Stocks to Buy', 'Strong Buy', 'Motley Fool', 'Zacks Rank'
+      ];
+      for (const word of blacklist) {
+        if (headline.includes(word)) return true;
+      }
+      return false;
+    }
+
+    const RSS_SOURCES = [
+      { url: 'https://news.google.com/rss/search?q=SK하이닉스&hl=ko', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=삼성전자+HBM&hl=ko', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=마이크론&hl=ko', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=LS일렉트릭&hl=ko', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=HD현대일렉트릭&hl=ko', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=효성중공업&hl=ko', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=두산에너빌리티&hl=ko', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=NVIDIA+AI&hl=ko', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=Microsoft+capex&hl=ko', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=AI+데이터센터&hl=ko', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=TSMC+CoWoS&hl=ko', icon: '📄' },
+      { url: 'https://news.google.com/rss/search?q=연준+금리&hl=ko', icon: '🏛️' }
+    ];
+
+    // 종목 전용 검색어로 직접 RSS 검색 추가
+    function getStockSpecificRSS() {
+      const sources = [];
+      const tickerLower = ticker.toLowerCase();
+      const name = stockItem.name;
+
+      sources.push({ url: `https://news.google.com/rss/search?q=${encodeURIComponent(name)}&hl=ko`, icon: '🎯' });
+
+      // 한글명도 검색
+      const koreanNames = {
+        'NVDA': '엔비디아', 'MSFT': '마이크로소프트', 'GOOGL': '알파벳',
+        'META': '메타', 'AMZN': '아마존', 'GEV': 'GE 버노바',
+        'ETN': '이튼', 'TSM': 'TSMC', 'MU': '마이크론',
+        'PWR': '콴타', 'AVGO': '브로드컴'
+      };
+      if (koreanNames[ticker]) {
+        sources.push({ url: `https://news.google.com/rss/search?q=${encodeURIComponent(koreanNames[ticker])}&hl=ko`, icon: '🎯' });
+      }
+
+      return sources;
+    }
+
+    async function fetchFromRSS(rssUrl, defaultIcon) {
+      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        if (data.status !== 'ok') return [];
+        return data.items
+          .filter(item => !isJunkNews(item.title))
+          .slice(0, 15)
+          .map(item => ({
+            time: formatRSSTime(item.pubDate),
+            icon: defaultIcon,
+            headline: item.title,
+            link: item.link
+          }));
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function formatRSSTime(pubDate) {
+      const date = new Date(pubDate);
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${month}/${day} ${hours}:${minutes}`;
+    }
+
+    function getTimestamp(timeStr) {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+      const [datePart, timePart] = timeStr.split(' ');
+      const [month, day] = datePart.split('/').map(Number);
+      const [hour, minute] = (timePart || '00:00').split(':').map(Number);
+      let year = currentYear;
+      if (month > currentMonth) year = currentYear - 1;
+      return new Date(year, month - 1, day, hour, minute).getTime();
+    }
+
+    async function loadRelatedNews() {
+      const keywords = getMatchKeywords();
+
+      // 매칭 키워드 표시
+      const keywordsHtml = keywords.slice(0, 8).map(kw =>
+        `<span class="news-keyword-chip">${kw}</span>`
+      ).join('');
+      document.getElementById('news-keywords').innerHTML = `매칭 키워드: ${keywordsHtml}`;
+
+      // 모든 RSS 소스 (기본 + 종목 전용)
+      const allSources = [...RSS_SOURCES, ...getStockSpecificRSS()];
+
+      const allRssNews = await Promise.all(
+        allSources.map(source => fetchFromRSS(source.url, source.icon))
+      );
+
+      const flatNews = allRssNews.flat();
+
+      // 중복 제거
+      const seen = new Set();
+      const uniqueNews = flatNews.filter(item => {
+        if (seen.has(item.headline)) return false;
+        seen.add(item.headline);
+        return true;
+      });
+
+      // 키워드로 필터링 (티커, 회사명, 태그 모두)
+      const matched = uniqueNews.filter(news => {
+        const headlineLower = news.headline.toLowerCase();
+        return keywords.some(kw => headlineLower.includes(kw));
+      });
+
+      // 시간순 정렬
+      matched.sort((a, b) => getTimestamp(b.time) - getTimestamp(a.time));
+
+      document.getElementById('news-count-badge').textContent = `${matched.length}건`;
+
+      const container = document.getElementById('news-list');
+      if (matched.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            관련 뉴스를 찾지 못했습니다.<br>
+            <span style="font-size: 11px;">태그를 추가하면 더 많은 뉴스가 매칭됩니다.</span>
+          </div>
+        `;
+      } else {
+        container.innerHTML = matched.slice(0, 30).map(news => `
+          <div class="news-item-large" onclick="window.open('${news.link}', '_blank')">
+            <div class="news-icon">${news.icon}</div>
+            <div class="news-content">
+              <div class="news-time">${news.time}</div>
+              <div class="news-headline">${news.headline}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      const now = new Date();
+      document.getElementById('last-update').textContent = now.toLocaleString('ko-KR');
+    }
+
+    /* ============================================
+       시작
+       ============================================ */
+    setInterval(renderTimeAndMarket, 1000);
+    setInterval(() => {
+      renderStockHeader();
+      loadRelatedNews();
+    }, 5 * 60 * 1000);
+
+    renderTimeAndMarket();
+    renderStockHeader();
+    renderTradingViewChart();
+    renderRelatedEvents();
+    loadRelatedNews();
+  </script>
+</body>
+</html>
